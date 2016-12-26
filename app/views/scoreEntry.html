@@ -1,0 +1,101 @@
+<div ng-controller="ScoreEntryController">
+    <p>成绩录入</p>
+    <div class="bgo-panel">
+        <ul class="bgo-control clearfix" ng-if="roleItems.index_score_getplanlist">
+            <li>
+                考试年级：
+                <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0">
+                    <option value="0">-- 请选择 --</option>
+                    <option ng-repeat="s in listData.SchoolGrade" 
+                            ng-bind="s.yearStr" 
+                            value="{{ s }}"></option>
+                </select>
+            </li>
+            <li>
+                年度：
+                <select class="bgo-select" ng-model="param.annual" ng-init="param.annual = ''">
+                    <option value="">-- 请选择 --</option>
+                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                </select>
+            </li>
+            <li>
+                学期：
+                <select class="bgo-select" ng-model="param.type" ng-init="param.type = 0">
+                    <option value="0">-- 请选择 --</option>
+                    <option value="1">上学期</option>
+                    <option value="2">下学期</option>
+                </select>
+            </li>
+            <!--<li>
+                考试科目：
+                <select class="bgo-select" ng-model="param.course_id">
+                    <option value="0">-- 请选择 --</option>
+                    <option ng-repeat="t in sData.Course"
+                            ng-bind="t.name" 
+                            ng-value="t.course_id"></option>
+                </select>
+            </li>-->
+            <li>
+                <button type="button" class="btn btn-primary bgo-button" ng-click="search()">查询</button>
+            </li>
+        </ul>
+        <!--<scrollbar>-->
+            <div style="overflow: auto;height: 400px">
+                <table class="bgo-table">
+                    <thead>
+                        <tr>
+                            <th>考试名称</th>
+                            <th>学期</th>
+                            <th>班级</th>
+                            <th>考试科目</th>
+                            <th>考试时间</th>
+                            <th>操作人</th>
+                            <th>操作时间</th>
+                            <th style="min-width: 160px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="!data.data.length > 0" class="noData">
+                            <td colspan="8">暂无数据</td>
+                        </tr>
+                        <tr ng-repeat="d in data.data">
+                            <td ng-bind="d.test_name"></td>
+                            <td>
+                                <span ng-if="d.type == 1">上学期</span>
+                                <span ng-if="d.type == 2">下学期</span>
+                            </td>
+                            <td ng-bind="d.yearStr + d.className"></td>
+                            <td>
+                                <span class="label label-info" ng-repeat="dc in d.courseData" ng-bind="dc.name" style="margin-right: 5px;"></span>
+                            </td>
+                            <td ng-bind="d.test_time * 1000 | date : 'yyyy-MM-dd'"></td>
+                            <td ng-bind="d.upload_user"></td>
+                            <td>
+                                <span ng-if="!d.is_upload">无</span>
+                                <span ng-if="d.is_upload" ng-bind="d.upload_time * 1000 | date : 'yyyy-MM-dd hh:mm:ss'"></span>
+                            </td>
+                            <td>
+                                <a style="color: #FF902B; vertical-align: middle;" ng-if="!d.is_upload && roleItems.index_score_getscorelist" ng-click="goPage(d.plan_id, d.class_id)">成绩录入</a>
+                                <a style="color: #27C24C; vertical-align: middle;" ng-if="d.is_upload && roleItems.index_score_getscorelist" ng-click="goPage(d.plan_id, d.class_id)">已录入
+                                    <span class="fa fa-pencil"></span>
+                                </a>
+                                <form class="downloadForm" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/studentScoreExcelOut" method="post" style="display: inline-block;">
+                                    <input type="hidden" name="token" ng-value="param.token">
+                                    <input type="hidden" name="school_id" ng-value="param.school_id">
+                                    <input type="hidden" name="class_id" ng-value="d.class_id">
+                                    <input type="hidden" name="plan_id" ng-value="d.plan_id">
+                                    <a ng-click="download($index)" style="color: #bbb; vertical-align: middle;margin-left: 5px;">模板下载</a>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        <!--</scrollbar>-->
+    </div>
+</div>

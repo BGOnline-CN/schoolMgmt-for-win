@@ -1,0 +1,146 @@
+<div ng-controller="StudentInfoController">
+    <p>学生信息统计表</p>
+    <div class="bgo-panel">
+        <ul class="bgo-control clearfix">
+            <li>
+                年级：
+                <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0">
+                    <option value="0">全部</option>
+                    <option ng-repeat="s in listData.SchoolGrade" 
+                            ng-bind="s.yearStr" 
+                            value="{{ s }}"></option>
+                </select>
+            </li>
+            <li style="float: right;margin-right: 0;">
+                <button type="submit" class="btn btn-warning bgo-button" ng-click="isShowLayer();" ng-if="roleItems.index_excelin_studentgradeexcelin">按年级导入导出学籍</button>
+            </li>
+        </ul>
+        <!--<scrollbar>-->
+        <div style="overflow: auto;height: 400px">
+            <table class="bgo-table">
+                <thead>
+                    <tr>
+                        <th>年级</th>
+                        <th>班级</th>
+                        <th>班级人数</th>
+                        <th>男生人数</th>
+                        <th>女生人数</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="!data.data" class="noData">
+                        <td colspan="6">暂无数据</td>
+                    </tr>
+                    <tr ng-repeat="d in data.data">
+                        <td ng-bind="d.yearStr"></td>
+                        <td ng-bind="d.name"></td>
+                        <td ng-bind="d.sex"></td>
+                        <td ng-bind="d.sex_1"></td>
+                        <td ng-bind="d.sex_2"></td>
+                        <td>
+                            <button type="button" class="btn btn-info bgo-button" ng-click="goPage(d.class_id)">详情</button>
+                            <button type="button" class="btn btn-success bgo-button" ng-click="add(d.grade_id, d.class_id, d.yearStr, d.name)" ng-if="roleItems.index_student_createstudent && d.Headmaster">新增学籍</button>
+                            <button type="button" class="btn btn-warning bgo-button" ng-click="isShowLayer();upload(1, d.class_id, d.yearStr, d.name);" ng-if="roleItems.index_student_createstudent && d.Headmaster">导入班级学籍</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--</scrollbar>-->
+    </div>
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel bgo-box-shadow" style="min-width: 700px;overflow-x: auto;" ng-show="!isClass">
+                <div class="bgo-panel-title">
+                    <span style="color: orange;" ng-bind="'请选择对应年级！'"></span>
+                    <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
+                </div>
+                <div class="bgo-panel-con">
+                    年级：
+                    <select class="bgo-select" ng-model="sToDownload" ng-change="getSgToDownload(sToDownload)" style="padding: 3px 12px 4px 12px;">
+                        <option value="">-- 请选择 --</option>
+                        <option ng-repeat="s in listData.SchoolGrade" 
+                                ng-bind="s.yearStr" 
+                                value="{{ s }}"></option>
+                    </select>
+                    <form ng-if="downloadGrade_id" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/studentGradeExcelOut" method="post" style="display: inline-block;">
+                        <input type="hidden" name="token" ng-value="param.token">
+                        <input type="hidden" name="school_id" ng-value="param.school_id">
+                        <input type="hidden" name="grade_id" ng-value="downloadGrade_id">
+                        <button type="submit" class="btn btn-primary bgo-button">下载年级模板</button>
+                    </form>
+                    <div class="file-upload-div" ng-if="downloadGrade_id" ng-click="upload(2)">
+                        导入年级学籍
+                        <input type="file" nv-file-select="" uploader="uploader2" class="file-input">
+                    </div>
+                </div>
+                <div style="overflow: auto;height: 400px">
+                    <div class="bgo-panel-con" style="overflow:auto;height: 350px;padding-top: 0;">
+                        <table class="bgo-table" ng-if="uploadData.data.error_data">
+                            <tbody>
+                                <tr ng-repeat="u in uploadData.data.error_data">
+                                    <td ng-bind="u.class_name" style="vertical-align: top;"></td>
+                                    <td>
+                                        <ul class="clearfix" ng-if="u.msg_exist.length > 0">
+                                            <li style="background-color: #EAEEF1;padding: 10px 12px;color: #7895AF;">以下学生信息已存在，导入失败</li>
+                                            <li ng-repeat="uexist in u.msg_exist" ng-bind="uexist.tname + ' 学籍号：' + uexist.study_no" style="min-width: 22%;float: left;margin: 5px;"></li>
+                                        </ul>
+                                        <ul class="clearfix" ng-if="u.msg_error.length > 0">
+                                            <li style="background-color: #EAEEF1;padding: 10px 12px;color: #7895AF;">以下学生信息导入失败</li>
+                                            <li ng-repeat="uerror in (u.msg_error ? u.msg_error : return) track by $index" ng-bind="uerror" style="margin: 5px;"></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="bgo-panel bgo-box-shadow" style="min-width: 700px;overflow-x: auto;" ng-show="isClass">
+                <div class="bgo-panel-title">
+                    <span style="color: orange;" ng-bind="'正在导入 ' + className + ' 数据！'"></span>
+                    <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
+                </div>
+                <div class="bgo-panel-con">
+                    <form action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/studentClassExcelOut" method="post" style="display: inline-block;">
+                        <input type="hidden" name="token" ng-value="param.token">
+                        <input type="hidden" name="school_id" ng-value="param.school_id">
+                        <button type="submit" class="btn btn-primary bgo-button">下载班级模板</button>
+                    </form>
+                    <div class="file-upload-div">
+                        导入班级学籍
+                        <input type="file" nv-file-select="" uploader="uploader1" class="file-input">
+                    </div>
+                </div>
+                <div style="overflow: auto;height: 400px">
+                    <div class="bgo-panel-con" style="overflow: auto;height: 300px;padding-top: 0;">
+                        <table class="bgo-table" ng-if="uploadData.data.error_data">
+                            <tbody>
+                                <tr ng-repeat="u in uploadData.data.error_data">
+                                    <td>
+                                        <ul class="clearfix" ng-if="u.msg_exist.length > 0">
+                                            <li style="background-color: #EAEEF1;padding: 10px 12px;color: #7895AF;">以下学生信息已存在，导入失败</li>
+                                            <li ng-repeat="uexist in u.msg_exist" ng-bind="uexist.tname + ' 学籍号：' + uexist.study_no" style="min-width: 22%;float: left;margin: 5px;"></li>
+                                        </ul>
+                                        <ul class="clearfix" ng-if="u.msg_error.length > 0">
+                                            <li style="background-color: #EAEEF1;padding: 10px 12px;color: #7895AF;">以下学生信息导入失败</li>
+                                            <li ng-repeat="uerror in (u.msg_error ? u.msg_error : return) track by $index" ng-bind="uerror" style="margin: 5px;"></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
+</div>

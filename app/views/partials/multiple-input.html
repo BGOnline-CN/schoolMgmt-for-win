@@ -1,0 +1,8 @@
+<div class="mult-input">
+    <ul class="clearfix">
+        <li ng-repeat="li in list track by $index" ng-bind="li.name" ng-click="selectLi($index, $event, li)"></li>
+    </ul>
+    <div class="clearfix">
+        <button type="button" class="btn btn-success bgo-button" style="display: block;margin: 0 auto;" ng-click="sure()">确定</button>
+    </div>
+</div>

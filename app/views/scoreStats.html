@@ -1,0 +1,96 @@
+<div ng-controller="ScoreStatsController">
+    <p>点击查询后生成统计数据</p>
+    <div class="bgo-panel">
+        <ul class="bgo-control clearfix">
+            <li>
+                年度：
+                <select class="bgo-select" ng-model="param.annual">
+                    <option value="">-- 请选择 --</option>
+                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                </select>
+            </li>
+            <li>
+                学期：
+                <select class="bgo-select" ng-model="param.type">
+                    <option value="">-- 请选择 --</option>
+                    <option value="1">上学期</option>
+                    <option value="2">下学期</option>
+                </select>
+            </li>
+            <li>
+                年级：
+                <select class="bgo-select" ng-model="s" ng-change="getSg(s)">
+                    <option value="">-- 请选择 --</option>
+                    <option ng-repeat="s in listData.SchoolGrade" 
+                            ng-bind="s.yearStr" 
+                            value="{{ s }}"></option>
+                </select>
+            </li>
+            <li style="position: relative;min-width: 140px;width:auto;">
+                <span style="vertical-align: sub;">科目：</span>
+                <span class="label label-info" ng-repeat="c in classArr track by $index" ng-bind="c.name" ng-if="!multShow" style="margin-right: 5px;"></span>
+                <div multiple-input list="sData.Course" ng-if="multShow"></div>
+            </li>
+            <li>
+                <button type="button" class="btn btn-primary bgo-button" ng-click="isShowLayer();search()">查询</button>
+            </li>
+        </ul>
+        <div class="inset-table" style="border: solid #E2E2E2;border-width: 1px 0 1px 0;padding: 10px 0;">
+            <!--<scrollbar style="padding-bottom: 15px;">-->
+            <div ng-if="!data" class="noData">暂无数据</div>
+            <div style="overflow: auto;height: 350px;">
+                <div ng-if="data" ng-bind-html="data | to_trusted" style="width: 1500px;"></div>
+            </div>
+            <!--</scrollbar>-->
+            <form ng-if="data" style="margin-top: 15px;" class="clearfix" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/scoreSummary" method="post" style="display: inline-block;">
+                <input type="hidden" name="token" ng-value="param.token">
+                <input type="hidden" name="school_id" ng-value="param.school_id">
+                <input type="hidden" name="course_id" ng-value="param.course_id">
+                <input type="hidden" name="annual" ng-value="param.annual">
+                <input type="hidden" name="type" ng-value="param.type">
+                <input type="hidden" name="grade_id" ng-value="param.grade_id">
+                <input type="hidden" name="is_html" ng-value="param.is_html">
+                <input type="hidden" name="plan_id" ng-value="param.plan_id">
+                <button type="submit" class="btn btn-warning bgo-button-right" ng-click="download()">下载成绩表</button>
+            </form>
+        </div>
+    </div>
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel bgo-box-shadow">
+                <div class="bgo-panel-title">
+                    <span style="color: orange;">请选择考试计划！</span>
+                    <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
+                </div>
+                <table class="bgo-inner-table">
+                    <thead>
+                        <tr>
+                            <th>考试名称</th>
+                            <th>考试时间</th>
+                            <th>表数据</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="!planData.data.length > 0" class="noData">
+                            <td colspan="3">暂无数据</td>
+                        </tr>
+                        <tr ng-repeat="p in planData.data">
+                            <td ng-bind="p.test_name"></td>
+                            <td ng-bind="p.test_time * 1000 | date: 'yyyy-MM-dd'"></td>
+                            <td>
+                                <button class="btn btn-success bgo-button" ng-click="scoreData(p.plan_id)">生成</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div paging total-page="totalpage" current-page="current_page" get-data="search()"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
+</div>

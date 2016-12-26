@@ -1,0 +1,163 @@
+<div ng-controller="UserAuditController">
+    <p>用户审核</p>
+    <div class="bgo-panel">
+        <ul class="bgo-control clearfix">
+            <!--<li>
+                <div bgo-select></div>
+            </li>-->
+            <li>
+                <div class="bgo-search">
+                    <input type="text" class="bgo-input" placeholder="请输入用户名">
+                    <button type="button" class="btn btn-primary bgo-button">查询</button>
+                </div>
+            </li>
+        </ul>
+        <!--<scrollbar>-->
+        <div style="overflow:auto;height: 400px">
+            <table class="bgo-table">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>授课</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="!data.data.length > 0" class="noData">
+                        <td colspan="7">暂无数据</td>
+                    </tr>
+                    <tr ng-repeat="d in data.data">
+                        <td ng-bind="$index + 1"></td>
+                        <td ng-bind="d.tname"></td>
+                        <td>
+                            <span ng-if="d.sex == 1">男</span>
+                            <span ng-if="d.sex == 2">女</span>
+                            <span ng-if="d.sex != 1 && d.sex != 2">保密</span>
+                        </td>
+                        <td>
+                            <p ng-repeat="t in d.explain" style="margin: 0;">
+                                <span ng-bind="t.yearStr + '-' + t.courseName + '：'" style="margin-right: 2px;"></span>
+                                <span ng-repeat="m in t.classData" ng-bind="m.name" style="margin-right: 2px;"></span>
+                            </p>
+                        </td>
+                        <td>
+                            <span variety val="{{ d.statuss }}" cfg="cfg"></span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary bgo-button" ng-click="isShowLayer();editUser($index, d.tname, d.ctcg_id, d.sex)">编辑</button>
+                            <button ng-if="d.status = 1" type="button" class="btn btn-success bgo-button" ng-click="applyUser(2, d.ctcg_id)">通过</button>
+                            <button ng-if="d.status = 1" type="button" class="btn btn-danger bgo-button" ng-click="applyUser(3, d.ctcg_id)">拒绝</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="7">
+                            <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--</scrollbar>-->
+    </div>
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel bgo-box-shadow" style="min-width: 700px;overflow-x: auto;">
+                <div class="bgo-panel-title">
+                    <span style="color: orange;" ng-bind="'正在修改' + param.tname + '，的资料！'"></span>
+                    <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
+                </div>
+                <!--<scrollbar>-->
+                <form class="bgo-form" style="overflow:auto;height: 300px;">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="form-title">真实姓名</td>
+                                <td>
+                                    <input type="text" class="bgo-input" ng-model="param.tname">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="form-title">性别：</td>
+                                <td>
+                                    <div class="bgo-radio">
+                                        <span>男</span>
+                                        <input type="radio" name="sex" ng-model="param.sex" value="1">
+                                        <span>女</span>
+                                        <input type="radio" name="sex" ng-model="param.sex" value="2">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="form-title" style="min-width: 80px;">教学信息</td>
+                                <td>
+                                    <button class="btn btn-success bgo-button" ng-click="addTr()">+ 新增</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="padding: 0;">
+                                    <table class="bgo-table" style="min-width: 500px;">
+                                        <thead>
+                                            <tr>
+                                                <th>所教年级</th>
+                                                <th>班级</th>
+                                                <th>教学科目</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="trArr.length < 1 && trData.length < 1">
+                                                <td colspan="4" class="noData">
+                                                    请添加教学信息
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="tr in trData track by $index">
+                                                <td ng-bind="tr.yearStr"></td>
+                                                <td>
+                                                    <span class="label label-info" ng-repeat="c in tr.classData" ng-bind="c.name" style="margin-right: 5px;"></span>
+                                                </td>
+                                                <td ng-bind="tr.courseName"></td>
+                                            </tr>
+                                            <tr ng-repeat="tr in trArr track by $index" ng-init="parentIndex = $index">
+                                                <td>
+                                                    <select class="bgo-select" ng-model="s" ng-change="getSg(parentIndex, s)">
+                                                        <option value="">-- 请选择 --</option>
+                                                        <option ng-repeat="s in searchData.SchoolGrade" 
+                                                                ng-bind="s.yearStr"
+                                                                value="{{ s }}"></option>
+                                                    </select>
+                                                </td>
+                                                <td style="position: relative;width: 200px;">
+                                                    <span class="label label-info" ng-repeat="c in classArr[parentIndex] track by $index" ng-bind="c.name" ng-if="!multShow[parentIndex]" style="margin-right: 5px;"></span>
+                                                    <div multiple-input index="parentIndex" list="sData[parentIndex].Class" ng-if="multShow[parentIndex]"></div>
+                                                </td>
+                                                <td>
+                                                    <select class="bgo-select" 
+                                                            ng-model="course_id[parentIndex]" 
+                                                            ng-options="t.course_id as t.name for t in sData[parentIndex].Course">
+                                                            <option value="">-- 请选择 --</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <button class="btn btn-primary bgo-button-right" ng-click="submit()" style="margin-left: 5px;">保存修改</button>
+                                                    <button type="button" class="btn btn-danger bgo-button-right" ng-click="removeTr()">删除</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <!--</scrollbar>-->
+            </div>
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
+</div>

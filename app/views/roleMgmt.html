@@ -1,0 +1,81 @@
+<div ng-controller="RoleMgmtController">
+    <p>角色管理</p>
+    <ul class="roleList clearfix">
+        <li ng-repeat="d in roleData" 
+            ng-class="{ true: 'select' }[isSelect[$index]]"
+            ng-bind="d.name" 
+            ng-mouseover="showBg($event)"
+            ng-mouseleave="clearBg($event)"
+            ng-style="{ left: $index * 80 }"
+            ng-click="selectRole($index, d.role_id)"></li>
+        <li class="hover-li"></li>
+    </ul>
+    <div class="bgo-panel">
+        <ul class="bgo-control clearfix">
+            <li>
+                <span>成员组成</span>
+            </li>
+        </ul>
+        <!--<scrollbar>-->
+            <div ng-switch="param.rolePage" style="overflow: auto;height: 350px">
+                <div ng-switch-when="1">
+                    <div ng-include="'app/views/partials/jiaoyanzu.html'"></div>
+                </div>
+                <div ng-switch-when="2">
+                    <div ng-include="'app/views/partials/nianjizu.html'"></div>
+                </div>
+                <div ng-switch-when="3">
+                    <div ng-include="'app/views/partials/banzuren.html'"></div>
+                </div>
+                <div ng-switch-when="4">
+                    <div ng-include="'app/views/partials/renkelaoshi.html'"></div>
+                </div>
+                <div ng-switch-default>
+                    <span ng-bind="jdcUser"></span>
+                </div>
+            </div>
+        <!--</scrollbar>-->
+    </div>
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel bgo-box-shadow">
+                <div class="bgo-panel-title" class="border-bottom: none;">
+                    <!--<span style="color: orange;">请选择老师！</span>-->
+                    <div class="bgo-search">
+                        <input type="text" class="bgo-input" placeholder="请输入教师姓名" ng-model="param.search">
+                        <button type="button" class="btn btn-primary bgo-button" ng-click="getSchoolUser()">查找</button>
+                    </div>
+                    <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
+                </div>
+                <table class="bgo-inner-table">
+                    <thead>
+                        <tr>
+                            <th>教师姓名</th>
+                            <th></th>
+                            <th>调度</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="!schoolUser.data" class="noData">
+                            <td colspan="3">暂无数据</td>
+                        </tr>
+                        <tr ng-repeat="u in schoolUser.data">
+                            <td ng-bind="u.tname"></td>
+                            <td></td>
+                            <td>
+                                <button class="btn btn-success bgo-button" ng-click="add(u.user_id)">任命</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div paging total-page="totalpage" current-page="current_page" get-data="getSchoolUser()"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
+</div>

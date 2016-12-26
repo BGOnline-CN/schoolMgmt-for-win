@@ -1,0 +1,84 @@
+<div ng-controller="GradeConfigController">
+    <p>年级配置</p>
+    <div style="overflow: auto;height: 500px">
+
+        <div class="bgo-panel" ng-show="roleItems.index_school_creategrade">
+            <div class="bgo-panel-title">
+                <span>新增年级</span>
+            </div>
+            <form class="bgo-form">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="form-title">毕业年份：</td>
+                            <td>
+                                <!--<input type="text" class="bgo-input" ng-model="param.grade" placeholder="如：2017" maxlength="4">
+                                <span class="label label-info" 
+                                    style="margin-right: 5px;display: block;padding: 6px 12px;width: 200px;border-radius: 0;" 
+                                    ng-if="yearTurngrade(param.grade, 6)" 
+                                    ng-bind="yearTurngrade(param.grade, 6) + '年级'"></span>-->
+                                <select class="bgo-select" ng-model="param.grade" ng-init="param.grade = 0">
+                                    <option value="0">-- 请选择 --</option>
+                                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button class="btn btn-primary bgo-button" ng-click="add()">添加</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div class="bgo-panel" ng-show="roleItems.index_school_getgrade">
+            <div class="bgo-panel-title">
+                <span>年级信息</span>
+            </div>
+            <!--<scrollbar>-->
+                
+            <table class="bgo-table" style="margin-top: 30px;">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">年级名称</th>
+                        <th style="width: 20%;">班级数</th>
+                        <th style="width: 20%;">毕业时间</th>
+                        <th style="width: 20%;">状态</th>
+                        <th style="width: 20%;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="!data" class="noData">
+                        <td colspan="5">暂无年级</td>
+                    </tr>
+                    <tr ng-repeat="d in data track by $index">
+                        <td>
+                            <span ng-bind="d.yearStr" ng-if="d.status == 1"></span>
+                            <span ng-bind="d.grade + '届'" ng-if="d.status == 2"></span>
+                        </td>
+                        <td ng-bind="d.class_num"></td>
+                        <td>
+                            <span ng-bind="d.grade" ng-show="!d.isEdit"></span>
+                            <input type="text" class="bgo-input" ng-model="d.grade" ng-show="d.isEdit">
+                        </td>
+                        <td>
+                            <span ng-if="d.status == 1" style="color: green;">正常</span>
+                            <span ng-if="d.status == 2" style="color: gray">已毕业</span>
+                        </td>
+                        <td>
+                            <button type="button" 
+                                    class="btn" 
+                                    ng-click="edit($index)" 
+                                    ng-class="{ true: 'btn-primary bgo-button', false: 'btn-success bgo-button' }[!d.isEdit]"
+                                    ng-bind="!d.isEdit ? '编辑' : '保存'"></button>
+                            <button type="button" class="btn btn-danger bgo-button" ng-click="remove(d.grade_id)">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--</scrollbar>-->
+        </div>
+    </div>
+</div>

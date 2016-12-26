@@ -1,0 +1,58 @@
+<div ng-controller="UserMgmtController">
+    <p>用户账号管理</p>
+    <div class="bgo-panel">
+        <ul class="bgo-control clearfix">
+            <li>
+                <div class="bgo-search">
+                    <form ng-submit="search()">
+                        <input type="text" class="bgo-input" ng-model="param.tname" placeholder="请输入用户姓名">
+                        <button type="submit" class="btn btn-primary bgo-button">查找</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+        <!--<scrollbar>-->
+            <div style="overflow:auto;height: 400px">
+                <table class="bgo-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>真实姓名</th>
+                            <th>性别</th>
+                            <th>角色</th>
+                            <th>最近登录时间</th>
+                            <!--<th>操作</th>-->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="!data.data.length > 0" class="noData">
+                            <td colspan="8">暂无数据</td>
+                        </tr>
+                        <tr ng-repeat="d in data.data">
+                            <td ng-bind="$index + 1"></td>
+                            <td ng-bind="d.tname"></td>
+                            <td>
+                                <span ng-if="d.sex == 1">男</span>
+                                <span ng-if="d.sex == 2">女</span>
+                                <span ng-if="d.sex != 1 && d.sex !=2">女</span>
+                            </td>
+                            <td>
+                                <p ng-repeat="du in d.UserAuth track by $index" ng-bind="du"></p>
+                            </td>
+                            <td ng-bind="d.login_time * 1000 | date: 'yyyy-MM-dd hh:mm:ss'"></td>
+                            <!--<td>
+                                <button type="button" class="btn btn-info bgo-button" ng-click="goPage(d.class_id)">详情</button>
+                            </td>-->
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        <!--</scrollbar>-->
+        </div>
+    </div>
+</div>

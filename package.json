@@ -1,0 +1,16 @@
+{
+  "name": "bgonline-admin",
+  "version": "0.0.1",
+  "main": "index.html",
+  "window": {
+    "title": "bgonline-admin",
+    "frame": false,
+    "width": 650,
+    "height": 550,
+    "toolbar": false,
+    "transparent": true,
+    "icon": "app/img/favicon.ico",
+    "show_in_taskbar": true,
+    "position": "center"
+  }
+}

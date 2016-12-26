@@ -1,0 +1,43 @@
+<div ng-controller="PermissionsMgmtController">
+    <p>权限分配</p>
+    <div class="bgo-panel" style="padding: 0;border:0;">
+        <div class="row" style="height: 500px;margin: 0">
+            <div class="col-xs-2" style="padding: 0;height: 100%;background-color: #E3E6ED;min-width: 130px;">
+                <header style="background-color: #798F9A;">角色组</header>
+                <ul class="left-ul clearfix">
+                    <li ng-repeat="d in roleData" 
+                        ng-class="{ true: 'select' }[isSelect[$index]]"
+                        ng-bind="d.name" 
+                        ng-click="selectRole($index, d.role_id)"></li>
+                </ul>
+            </div>
+            <div class="col-xs-10" style="padding: 0;height: 100%;" ng-repeat-start="d in permissionsData" ng-init="parentIndex = $index">
+                <!--<scrollbar>-->
+                    <div style="overflow:auto; height: 500px;">
+                        <header style="background-color: #C5D2D8;">
+                            <span ng-bind="d.AuthName"></span>
+                            <!--<span class="fa fa-angle-double-down fa-lg" 
+                                style="float: right;margin-top: 5px;cursor: pointer;"
+                                ng-click="isShow($event)"></span>-->
+                        </header>
+                        <ul class="right-ul clearfix">
+                            <li ng-repeat="f in d.val" ng-init="rowsIndex = $index">
+                                <div class="big-class">
+                                    <input type="checkbox" ng-model="f.is_check" ng-change="selectAll(parentIndex, rowsIndex)">
+                                    <span ng-bind="f.controller_name"></span>
+                                </div>
+                                <ul class="small-class clearfix">
+                                    <li ng-repeat="g in f.auth">
+                                        <input type="checkbox" ng-model="g.is_check" ng-change="selectOne(parentIndex, rowsIndex, $index)">
+                                        <span ng-bind="g.action_name"></span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                <!--</scrollbar>-->
+            </div>
+            <span ng-repeat-end></span>
+        </div>
+    </div>
+</div>

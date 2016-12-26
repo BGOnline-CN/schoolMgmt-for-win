@@ -1,0 +1,117 @@
+<div ng-controller="AddScoreController">
+    <p>
+        <a ui-sref="app.scoreEntry">成绩录入</a> > 上传成绩
+    </p>
+    <div class="bgo-panel clearfix">
+        <ul class="bgo-control clearfix">
+            <li>
+                <span ng-bind="'考试年级：' + listData.planData.gradeClass"></span>
+            </li>
+            <li>
+                <span ng-bind="listData.planData.annual + '年度'"></span>
+                <span ng-if="listData.planData.type == 1">上期</span>
+                <span ng-if="listData.planData.type == 2">下期</span>
+                <span ng-bind="listData.planData.test_name ? '《' + listData.planData.test_name + '》' : return"></span>
+            </li>
+            <li>
+                <span>考试时间：</span>
+                <span ng-bind="listData.planData.test_time ? listData.planData.test_time * 1000 : return | date: 'yyyy-MM-dd'"></span>
+            </li>
+            <li ng-if="listData.planData.headMaster"
+                ng-bind="'班主任：' + listData.planData.headMaster"></li>
+            <li style="float: right;margin-right: 0;" ng-if="roleItems.index_excelout_classallscoreexcelout">
+                <form class="clearfix" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/classAllScoreExcelOut" method="post" style="display: inline-block;">
+                    <input type="hidden" name="token" ng-value="param.token">
+                    <input type="hidden" name="school_id" ng-value="param.school_id">
+                    <input type="hidden" name="class_id" ng-value="listData.planData.class_id">
+                    <input type="hidden" name="plan_id" ng-value="listData.planData.plan_id[0]">
+                    <button type="submit" class="btn btn-primary bgo-button">成绩下载</button>
+                </form>
+            </li>
+            <li style="float: right;margin-right: 5px;" ng-if="roleItems.index_excelin_scoreclassexcelin">
+                <button type="button" class="btn btn-warning bgo-button" ng-click="isShowLayer();">成绩导入</button>
+            </li>
+        </ul>
+        <!--<scrollbar>-->
+            <div style="overflow: auto;height: 400px">
+                <table class="bgo-table bgo-auto-table" style="table-layout: fixed;">
+                    <thead>
+                        <tr>
+                            <th rowspan="{{ tableData.rows }}">序号</th>
+                            <th ng-repeat="d in tableData.json"
+                                ng-if="!d.subTitle"
+                                rowspan="{{ tableData.rows }}">{{d.title}}</th>
+                            <th ng-repeat="d in tableData.json"
+                                ng-if="d.subTitle"
+                                colspan="{{ tableData.cols }}">{{d.title}}</th>
+                        </tr>
+                        <tr>
+                            <th ng-repeat="d in tableData.trOther track by $index">{{d}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="!listData.studentData" class="noData">
+                            <td colspan="{{ tableData.json.length + tableData.trOther.length/2 + 1 }}">暂无学生</td>
+                        </tr>
+                        <tr ng-repeat="d in listData.studentData" ng-init="parentIndex = $index">
+                            <td ng-bind="$index + 1" style="text-align: center;"></td>
+                            <td ng-bind="d.tname"></td>
+                            <td contenteditable ng-model="d.test_number" strip-br="true"></td>
+                            <td ng-repeat="t in d.scoreInfo"
+                                contenteditable="{{ t.score == null ? false : true }}"
+                                strip-br="true"
+                                ng-class="{ true: 'contenteditable-disabled' }[t.score == null]"
+                                ng-model="t.score"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        <!--</scrollbar>-->
+        <button type="button" class="btn btn-primary bgo-button-right" style="margin-top: 15px;" ng-click="save()">保存</button>
+    </div>
+    
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel bgo-box-shadow" style="min-width: 700px;overflow-x: auto;">
+                <div class="bgo-panel-title">
+                    <p style="color: orange;display: inline;">
+                        <span ng-bind="'正在导入' + listData.planData.gradeClass"></span>
+                        <span ng-bind="listData.planData.annual + '年度'"></span>
+                        <span ng-if="listData.planData.type == 1">上期</span>
+                        <span ng-if="listData.planData.type == 2">下期</span>
+                        <span ng-bind="listData.planData.test_name ? '《' + listData.planData.test_name + '》考试成绩' : return"></span>
+                    </p>
+                    <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
+                </div>
+                <div class="bgo-panel-con">
+                    <div class="file-upload-div" ng-click="upload(listData.planData.class_id, listData.planData.plan_id[0]);">
+                        excel导入
+                        <input type="file" nv-file-select="" uploader="uploader" class="file-input">
+                    </div>
+                </div>
+                <!--<scrollbar>-->
+                    <div class="bgo-panel-con" style="overflow: auto;height: 200px;padding-top: 0;">
+                        <table class="bgo-table" ng-if="uploadData.data">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <ul class="clearfix" ng-if="uploadData.data.msg_success.length > 0">
+                                            <li style="background-color: #27C24C;padding: 10px 12px;color: #fff;">学生成绩导入成功</li>
+                                            <li ng-repeat="us in uploadData.data.msg_success track by $index" ng-bind="us" style="margin: 5px;"></li>
+                                        </ul>
+                                        <p style="background-color: #F05050;padding: 10px 12px;color: #fff;" ng-if="uploadData.data.msg_error">学生成绩导入失败</p>
+                                        <ul class="clearfix" ng-repeat="ue in uploadData.data.msg_error">
+                                            <li ng-repeat="ued in ue track by $index" ng-bind="ued" style="margin: 5px;"></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                <!--</scrollbar>-->
+            </div>
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
+</div>

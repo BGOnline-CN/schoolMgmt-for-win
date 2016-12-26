@@ -1,0 +1,115 @@
+[
+  {
+    "注释": {
+      "text": "Menu Heading",
+      "heading": "true",
+      "translate": "sidebar.heading.HEADER"
+    }
+  },
+  {
+    "sref": "app.home",
+    "icon": "",
+    "translate": "首页"
+  },
+  {
+    "sref": "app.scoreEntry",
+    "icon": "fa fa-file-o",
+    "translate": "成绩管理",
+    "submenu": [
+      {
+        "sref": "app.scoreEntry",
+        "translate": "成绩录入"
+      },
+      {
+        "sref": "app.scoreStats",
+        "translate": "年级成绩统计"
+      },
+      {
+        "sref": "app.scoreStatsAll",
+        "translate": "全校成绩统计"
+      }
+    ]
+  },
+  {
+    "sref": "app.studentInfo",
+    "icon": "fa fa-cube",
+    "translate": "学籍管理",
+    "submenu": [
+      {
+        "sref": "app.studentInfo",
+        "translate": "学生信息"
+      },
+      {
+        "sref": "app.schoolRoll",
+        "translate": "学籍查找"
+      }
+    ]
+  },
+  {
+    "sref": "app.createExamPlan",
+    "icon": "fa fa-calendar-o",
+    "translate": "考试管理",
+    "submenu": [
+      {
+        "sref": "app.createExamPlan",
+        "translate": "创建考试计划"
+      },
+      {
+        "sref": "app.queryExamPlan",
+        "translate": "考试计划查询"
+      }
+    ]
+  },
+  {
+    "sref": "app.roleMgmt",
+    "icon": "fa fa-user",
+    "translate": "角色管理"
+  },
+  {
+    "sref": "app.userMgmt",
+    "icon": "fa fa-group",
+    "translate": "用户管理",
+    "submenu": [
+      {
+        "sref": "app.userMgmt",
+        "translate": "用户账号管理"
+      },
+      {
+        "sref": "app.userAudit",
+        "translate": "用户审核"
+      }
+    ]
+  },
+  {
+    "sref": "app.permissionsMgmt",
+    "icon": "fa fa-sitemap",
+    "translate": "权限分配"
+  },
+  {
+    "sref": "app.schoolInfoMgmt",
+    "icon": "fa fa-cogs",
+    "translate": "学校配置",
+    "submenu": [
+      {
+        "sref": "app.schoolInfoMgmt",
+        "translate": "学校信息"
+      },
+      {
+        "sref": "app.gradeConfig",
+        "translate": "年级配置"
+      },
+      {
+        "sref": "app.classConfig",
+        "translate": "班级配置"
+      },
+      {
+        "sref": "app.subjectConfig",
+        "translate": "科目配置"
+      },
+      {
+        "sref": "app.moduleConfig",
+        "translate": "模块配置"
+      }
+    ]
+  }
+]

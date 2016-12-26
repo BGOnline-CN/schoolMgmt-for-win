@@ -1,0 +1,167 @@
+<header>   
+    <nav role="navigation" class="navbar topnavbar">
+        <!-- START navbar header-->
+        <div class="navbar-header">
+            <a class="navbar-brand">
+                <div class="brand-logo">
+                    <img src="app/img/logo.png" alt="App Logo" class="img-responsive" />
+                </div>
+                <!--<div class="brand-logo-collapsed">
+                    <img src="app/img/logo-single.png" alt="App Logo" class="img-responsive" />
+                </div>-->
+            </a>
+        </div>
+        <!-- END navbar header-->
+        <!-- START Nav wrapper-->
+        <div class="nav-wrapper">
+            <!-- START Left navbar-->
+            <!--<ul class="nav navbar-nav">
+                <li>
+                    <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
+                    <em class="fa fa-navicon"></em>
+                    </a>
+                    <a toggle-state="aside-toggled" no-persist="no-persist" class="visible-xs sidebar-toggle">
+                    <em class="fa fa-navicon"></em>
+                    </a>
+                </li>
+            </ul>-->
+            <!-- END Left navbar-->
+            <!-- START Right Navbar-->
+            <ul class="nav navbar-nav navbar-right">
+                <!--<li>
+                    <a>
+                    <em class="fa fa-bell"></em>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                    <em class="fa fa-cog"></em>
+                    </a>
+                </li>-->
+                <li>
+                    <a onclick="win.minimize();">
+                    <em class="fa fa-minus"></em>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="win.toggleFullscreen();">
+                    <em class="fa fa-square-o"></em>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="win.close();">
+                    <em class="fa fa-close"></em>
+                    </a>
+                </li>
+                <!-- END Offsidebar menu-->
+            </ul>
+            <!-- END Right Navbar-->
+        </div>
+        <!-- END Nav wrapper-->
+        <!-- START Search form-->
+        <form role="search" action="search.html" class="navbar-form">
+            <div class="form-group has-feedback">
+                <input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" class="form-control" />
+                <div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>
+            </div>
+            <button type="submit" class="hidden btn btn-default">Submit</button>
+        </form>
+        <!-- END Search form-->
+        </nav>
+</header>
+
+<div ng-controller="UserCenterController">
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[!isShow]">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel">
+                <div class="bgo-panel-title">
+                    <img src="app/img/defaultHeader.png" ng-src="{{ param.header }}" class="bgo-header-circle" alt="头像" style="margin-right: 5px;">
+                    欢迎您：<span ng-bind="param.user_name"></span>
+                </div>
+                <div class="bgo-panel-con" style="margin-top: 25px;">
+                    <ul class="bgo-tab clearfix">
+                        <li ng-repeat="d in tabList">
+                            <span ng-click="show($event, $index)" ng-class="{ true: 'select' }[!$index]" ng-bind="d.title"></span>
+                        </li>
+                    </ul>
+                    <div ng-switch="_index">
+                        <div class="bgo-tab-con" ng-switch-when="0">
+                            <p class="bgo-tab-con-title">登录账号</p>
+                            <p class="bgo-tab-con-list">
+                                账号：<span ng-bind="data.user_name"></span>
+                            </p>
+                            <p class="bgo-tab-con-list">
+                                创建时间：<span ng-bind="data.create * 1000 | date: 'yyyy-MM-dd hh:mm:ss'"></span>
+                            </p>
+                            <!--<p class="bgo-tab-con-tip">绑定账号后你可以通过其登录</p>
+                            <div>
+                                <img src="app/img/QQ.png" class="bgo-header-circle" style="margin-right: 5px;">
+                                <span>QQ</span>
+                                <button type="button" class="btn btn-primary bgo-button-right">绑定</button>
+                            </div>-->
+                        </div>
+                        <div class="bgo-tab-con" ng-switch-when="1">
+                            <p class="bgo-tab-con-list">
+                                真实姓名：<span ng-bind="data.tname"></span>
+                            </p>
+                            <table class="bgo-inner-table" style="margin-top: 15px;">
+                                <thead>
+                                    <tr>
+                                        <th>就职学校</th>
+                                        <th>职位</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="d in data.authArr">
+                                        <td ng-bind="d.name"></td>
+                                        <td>
+                                            <p ng-repeat="da in d.auth track by $index" ng-bind="da"></p>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary bgo-button" ng-click="mgmt(d.school_id)">管理</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bgo-tab-con" ng-switch-when="2">
+                            <form class="bgo-form" style="padding: 0;" novalidate>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td class="form-title">旧密码：</td>
+                                            <td>
+                                                <input type="password" class="bgo-input" ng-model="param.old_password" required>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="form-title">新密码：</td>
+                                            <td>
+                                                <input type="password" class="bgo-input" ng-model="param.password" required>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="form-title">确认密码：</td>
+                                            <td>
+                                                <input type="password" class="bgo-input" ng-model="param.confirm_password" ng-class="{true: 'ng-invalid'}[param.password != param.confirm_password]" required>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary bgo-button" ng-click="changePwd()">确定</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-2"></div>
+    </div>
+</div>

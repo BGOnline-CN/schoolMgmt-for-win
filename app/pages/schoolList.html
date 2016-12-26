@@ -1,0 +1,217 @@
+<header>   
+    <nav role="navigation" class="navbar topnavbar">
+        <!-- START navbar header-->
+        <div class="navbar-header">
+            <a class="navbar-brand">
+                <div class="brand-logo">
+                    <img src="app/img/logo.png" alt="App Logo" class="img-responsive" />
+                </div>
+                <!--<div class="brand-logo-collapsed">
+                    <img src="app/img/logo-single.png" alt="App Logo" class="img-responsive" />
+                </div>-->
+            </a>
+        </div>
+        <!-- END navbar header-->
+        <!-- START Nav wrapper-->
+        <div class="nav-wrapper">
+            <!-- START Left navbar-->
+            <!--<ul class="nav navbar-nav">
+                <li>
+                    <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
+                    <em class="fa fa-navicon"></em>
+                    </a>
+                    <a toggle-state="aside-toggled" no-persist="no-persist" class="visible-xs sidebar-toggle">
+                    <em class="fa fa-navicon"></em>
+                    </a>
+                </li>
+            </ul>-->
+            <!-- END Left navbar-->
+            <!-- START Right Navbar-->
+            <ul class="nav navbar-nav navbar-right">
+                <!--<li>
+                    <a>
+                    <em class="fa fa-bell"></em>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                    <em class="fa fa-cog"></em>
+                    </a>
+                </li>-->
+                <li>
+                    <a onclick="win.minimize();">
+                    <em class="fa fa-minus"></em>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="win.toggleFullscreen();">
+                    <em class="fa fa-square-o"></em>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="win.close();">
+                    <em class="fa fa-close"></em>
+                    </a>
+                </li>
+                <!-- END Offsidebar menu-->
+            </ul>
+            <!-- END Right Navbar-->
+        </div>
+        <!-- END Nav wrapper-->
+        <!-- START Search form-->
+        <form role="search" action="search.html" class="navbar-form">
+            <div class="form-group has-feedback">
+                <input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" class="form-control" />
+                <div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>
+            </div>
+            <button type="submit" class="hidden btn btn-default">Submit</button>
+        </form>
+        <!-- END Search form-->
+        </nav>
+</header>
+<div ng-controller="SchoolListController">
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[!isShow]">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel" style="min-width: 600px;overflow-x: auto;">
+                <div class="bgo-panel-title">
+                    <img src="app/img/defaultHeader.png" ng-src="{{ param.header }}" class="bgo-header-circle" alt="头像" style="margin-right: 5px;">
+                    欢迎您：<span ng-bind="param.user_name"></span>
+                </div>
+                <div class="bgo-panel-con">
+                    <p>学校</p>
+                    <div class="bgo-search">
+                        <form ng-submit="search()">
+                            <input type="text" class="bgo-input" placeholder="请输入学校编码" ng-model="param.school_id">
+                            <button type="submit" class="btn btn-primary bgo-button">搜索</button>
+                        </form>
+                    </div>
+                    <p class="school" ng-if="searchData">
+                        搜索结果：{{ searchData.SchoolInfo.name }}
+                        <a href="" ng-click="isShowLayer()" style="margin-left: 10px;">申请入校</a>
+                    </p>
+                </div>
+                <!--<scrollbar>-->
+                    <div class="list">
+                        <table class="bgo-inner-table">
+                            <thead>
+                                <tr>
+                                    <th>学校编码</th>
+                                    <th>学校名称</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-if="!data" class="noData">
+                                    <td colspan="4">您还未加入学校</td>
+                                </tr>
+                                <tr ng-repeat="d in data">
+                                    <td ng-bind="d.school_id"></td>
+                                    <td ng-bind="d.name"></td>
+                                    <td>
+                                        <span variety val="{{ d.status }}" cfg="cfg"></span>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                <!--<scrollbar>-->
+            </div>
+        </div>
+        <div class="col-xs-2"></div>
+    </div>
+    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
+            <div class="bgo-panel" style="min-width: 700px;overflow-x: auto;">
+                <div class="bgo-panel-title">
+                    <span style="color: orange;" ng-bind="'正在申请加入' + searchData.SchoolInfo.name + '，请尽快完善资料！'"></span>
+                    <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
+                </div>
+                <form name="form" class="bgo-form" novalidate>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="form-title">真实姓名</td>
+                                <td>
+                                    <input type="text" class="bgo-input" ng-model="param.tname" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="form-title">性别：</td>
+                                <td>
+                                    <div class="bgo-radio" ng-init="param.sex = 1">
+                                        <span>男</span>
+                                        <input type="radio" name="sex" ng-model="param.sex" value="1">
+                                        <span>女</span>
+                                        <input type="radio" name="sex" ng-model="param.sex" value="2">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="form-title">教学信息</td>
+                                <td>
+                                    <button class="btn btn-success bgo-button" ng-click="addTr()">+ 新增</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="padding: 0;">
+                                    <table class="bgo-table" style="min-width: 500px;">
+                                        <thead>
+                                            <tr>
+                                                <th>所教年级</th>
+                                                <th>班级</th>
+                                                <th>教学科目</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="trArr.length < 1">
+                                                <td colspan="4" class="noData">
+                                                    请添加教学信息
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="tr in trArr track by $index" ng-init="parentIndex = $index">
+                                                <td>
+                                                    <select class="bgo-select" ng-model="s" ng-change="getSg(parentIndex, s)" required>
+                                                        <option value="">-- 请选择 --</option>
+                                                        <option ng-repeat="s in searchData.SchoolGrade" 
+                                                                ng-bind="s.yearStr"
+                                                                value="{{ s }}"></option>
+                                                    </select>
+                                                </td>
+                                                <td style="position: relative;width: 200px;">
+                                                    <span class="label label-info" ng-repeat="c in classArr[parentIndex] track by $index" ng-bind="c.name" ng-if="!multShow[parentIndex]" style="margin-right: 5px;"></span>
+                                                    <div multiple-input index="parentIndex" list="sData[parentIndex].Class" ng-if="multShow[parentIndex]"></div>
+                                                </td>
+                                                <td>
+                                                    <select class="bgo-select" 
+                                                            required
+                                                            ng-model="course_id[parentIndex]" 
+                                                            ng-options="t.course_id as t.name for t in sData[parentIndex].Course">
+                                                            <option value="">-- 请选择 --</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <button class="btn btn-primary bgo-button-right" ng-click="submit()" style="margin-left: 5px;">提交申请</button>
+                                                    <button type="button" class="btn btn-danger bgo-button-right" ng-click="removeTr()">删除</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div class="col-xs-2"></div>
+    </div>
+</div>

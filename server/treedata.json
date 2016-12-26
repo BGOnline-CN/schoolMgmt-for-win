@@ -1,0 +1,44 @@
+{   "data1":[{
+
+    }],
+    "data": [{
+        "label": "年级",
+        "children": [{
+            "label": "一年级",
+            "children": [{
+                "label": "班级",
+                "class_id": 1,
+                "formKey": "class_id",
+                "children": ["一班", "二班", "三班"]
+            },{
+                "label": "科目",
+                "children": ["语文", "数学"]
+            }]
+        }, {
+            "label": "二年级",
+            "grade_id": 8,
+            "children": [{
+                "label": "班级",
+                "children": [{
+                    "label": "1班",
+                    "classs_id": 10
+                },{
+                    "label": "1班",
+                    "classs_id": 10
+                }]
+            },{
+                "label": "科目",
+                "children": ["语文", "数学", "体育"]
+            }]
+        }, {
+            "label": "三年级",
+            "children": [{
+                "label": "班级",
+                "children": ["一班", "二班", "三班"]
+            }]
+        }, {
+            "label": "四年级",
+            "children": ["语文", "数学", "体育"]
+        }]
+    }]
+}

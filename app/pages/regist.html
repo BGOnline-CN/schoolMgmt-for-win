@@ -1,0 +1,58 @@
+<div ng-controller="RegistController">
+    <div class="bgo-panel bgo-div-glass bgo-box-shadow" style="width: 500px;margin: 0 auto;margin-top: 50px;border: none;position: relative;">
+        <header class="topnavbar-wrapper" style="position: absolute;left: 0;padding: 0;border: none;">
+            <nav role="navigation" class="navbar topnavbar" style="background: none;">
+                <div class="nav-wrapper" style="box-shadow: none;">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a class="loginClose" onclick="win.minimize();">
+                                <em class="fa fa-minus"></em>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="loginClose" onclick="win.close();">
+                                <em class="fa fa-close"></em>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <p style="text-align: center;margin: 0;font-size: 1.2em;font-weight: bold;color:#797979;">立即注册</p>
+        <form class="bgo-form" style="padding: 20px;" ng-submit="go()">
+            <table style="width: 300px; margin: 0 auto;">
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <input type="text" class="bgo-input" ng-model="param.user_name" style="width: 300px;" placeholder="用户名" autofocus="autofocus">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="password" class="bgo-input" ng-model="param.password" style="width: 300px;" placeholder="密码">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="password" class="bgo-input" ng-model="param.confirm_password" style="width: 300px;" ng-class="{true: 'ng-invalid'}[param.password != param.confirm_password]" placeholder="确认密码">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="submit" class="btn btn-primary bgo-button" style="width: 100%; padding: 6px 12px;">注册</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            已有账号？<a ui-sref="page.login">立即登录</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $('body').addClass('win-transparent');
+</script>
+

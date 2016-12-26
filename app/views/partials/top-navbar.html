@@ -1,0 +1,86 @@
+<!-- START Top Navbar-->
+<nav role="navigation" class="navbar topnavbar">
+   <!-- START navbar header-->
+   <div class="navbar-header">
+      <a class="navbar-brand">
+         <div class="brand-logo">
+            <img src="app/img/logo.png" alt="App Logo" class="img-responsive" />
+         </div>
+         <!--<div class="brand-logo-collapsed">
+            <img src="app/img/logo-single.png" alt="App Logo" class="img-responsive" />
+         </div>-->
+      </a>
+   </div>
+   <!-- END navbar header-->
+   <!-- START Nav wrapper-->
+   <div class="nav-wrapper">
+      <!-- START Left navbar-->
+      <!--<ul class="nav navbar-nav">
+         <li>
+            <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
+               <em class="fa fa-navicon"></em>
+            </a>
+            <a toggle-state="aside-toggled" no-persist="no-persist" class="visible-xs sidebar-toggle">
+               <em class="fa fa-navicon"></em>
+            </a>
+         </li>
+      </ul>-->
+      <ul class="nav navbar-nav">
+         <li>
+             <a ng-if="user.company" ng-bind="user.company"></a>
+         </li>
+      </ul>
+      <!-- END Left navbar-->
+      <!-- START Right Navbar-->
+      <ul class="nav navbar-nav navbar-right">
+         <!--<li>
+            <a>
+               <em class="fa fa-bell"></em>
+            </a>
+         </li>
+         <li>
+            <a>
+               <em class="fa fa-cog"></em>
+            </a>
+         </li>-->
+         <li>
+            <a ui-sref="page.userCenter">
+               <img class="bgo-header-circle" style="width: 22px;height: 22px;" src="app/img/defaultHeader.png" alt="头像">
+               <span ng-bind="user.name"></span>
+               <!--<em class="fa fa-sort-down" style="vertical-align: text-top;"></em>-->
+            </a>
+         </li>
+         <li>
+             <span class="v-cut-off"></span>
+         </li>
+         <li>
+            <a onclick="win.minimize();">
+               <em class="fa fa-minus"></em>
+            </a>
+         </li>
+         <li>
+             <a onclick="win.toggleFullscreen();">
+               <em class="fa fa-square-o"></em>
+            </a>
+         </li>
+         <li>
+             <a onclick="win.close();">
+               <em class="fa fa-close"></em>
+            </a>
+         </li>
+         <!-- END Offsidebar menu-->
+      </ul>
+      <!-- END Right Navbar-->
+   </div>
+   <!-- END Nav wrapper-->
+   <!-- START Search form-->
+   <form role="search" action="search.html" class="navbar-form">
+      <div class="form-group has-feedback">
+         <input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" class="form-control" />
+         <div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>
+      </div>
+      <button type="submit" class="hidden btn btn-default">Submit</button>
+   </form>
+   <!-- END Search form-->
+</nav>
+<!-- END Top Navbar-->

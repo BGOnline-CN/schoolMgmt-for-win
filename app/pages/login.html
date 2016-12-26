@@ -1,0 +1,71 @@
+<div ng-controller="LoginController">
+    <div class="bgo-panel bgo-div-glass bgo-box-shadow" style="width: 500px;margin: 0 auto;margin-top: 50px;border: none;position: relative;">
+        <header class="topnavbar-wrapper" style="position: absolute;left: 0;padding: 0;border: none;">
+            <nav role="navigation" class="navbar topnavbar" style="background: none;">
+                <div class="nav-wrapper" style="box-shadow: none;">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a class="loginClose" onclick="win.minimize();">
+                                <em class="fa fa-minus"></em>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="loginClose" onclick="win.close();">
+                                <em class="fa fa-close"></em>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <p style="text-align: center;margin: 0;font-size: 1.2em;font-weight: bold;">账号登录</p>
+        <form class="bgo-form" style="padding: 20px;z-index: 9999;" ng-submit="go()">
+            <table style="width: 300px; margin: 0 auto;">
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <input type="text" class="bgo-input" ng-model="param.user_name" style="width: 300px;" placeholder="用户名" autofocus="autofocus">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="password" class="bgo-input" ng-model="param.password" style="width: 300px;" placeholder="密码">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0;">
+                            <input type="checkbox" ng-model="param.isChecked">
+                            <span style="vertical-align: top;">记住我</span>
+                        </td>
+                        <td style="padding: 0;">
+                            <!--<a href="" style="float: right;">忘记密码?</a>-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="submit" class="btn btn-primary bgo-button" style="width: 100%; padding: 6px 12px;">登录</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center; ">
+                            <span style="">还没有账号？</span>
+                            <a ui-sref="page.regist">马上注册</a>
+                        </td>
+                    </tr>
+                    <!--<tr>
+                        <td colspan="2" style="text-align: center;">
+                            <span style="vertical-align: middle;">使用QQ账号登录</span>
+                            <a href="javascript:;" onclick="return window.open('https://graph.qq.com/oauth2.0/authorize?client_id=101363257&amp;response_type=token&amp;scope=all&amp;redirect_uri=http%3A%2F%2Fwww.thinktorch.com/othercallback/qc_callback.html', 'oauth2Login_10399' ,'height=525,width=585, toolbar=no, menubar=no, scrollbars=no, status=no, location=yes, resizable=yes');">
+                                <img src="app/img/qq.png" alt="QQ登录" border="0">
+                            </a>
+                        </td>
+                    </tr>-->
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $('body').addClass('win-transparent');
+</script>
+

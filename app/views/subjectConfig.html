@@ -1,0 +1,181 @@
+<div ng-controller="SubjectConfigController">
+    <p>科目配置</p>
+    <!--<scrollbar>-->
+    <div style="overflow:auto;height: 500px;">
+        <div class="bgo-panel" ng-show="roleItems.index_school_createcourse">
+            <div class="bgo-panel-title">
+                <span>新增科目</span>
+            </div>
+            <form name="form" class="bgo-form" novalidate>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:10%"></th>
+                            <th style="width:25%"></th>
+                            <th style="width:20%"></th>
+                            <th style="width:45%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="form-title">科目名称：</td>
+                            <td>
+                                <input type="text" class="bgo-input" ng-model="param.name" required>
+                            </td>
+                            <td class="form-title">总分：</td>
+                            <td>
+                                <input type="text" class="bgo-input" ng-model="param.total_score" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-title">附加分：</td>
+                            <td>
+                                <input type="text" class="bgo-input" ng-model="param.append_score" required>
+                            </td>
+                            <td class="form-title">年级：</td>
+                            <td style="position: relative;max-width: 200px;">
+                                <p ng-if="!multShow" style="padding: 5px 0;">
+                                    <span class="label label-info" ng-repeat="c in classArr track by $index" ng-bind="c.name" style="float:left;margin: 5px;"></span>
+                                </p>
+                                <div multiple-input list="listData" ng-if="multShow"></div>
+                                <p ng-if="!multShow" style="padding: 5px 0;">
+                                    <button type="button" class="btn btn-danger bgo-button" ng-click="editMultShow()">修改</button>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-title" style="vertical-align: text-top;">区间：</td>
+                            <td colspan="3">
+                                <ul class="score">
+                                    <li>
+                                        <input type="text" class="bgo-input" ng-model="param.rate1[0]">
+                                        -
+                                        <input type="text" class="bgo-input" ng-model="param.rate1[1]">
+                                        <span class="label label-success">优秀</span>
+                                    </li>
+                                    <li>
+                                        <input type="text" class="bgo-input" ng-model="param.rate2[0]">
+                                        -
+                                        <input type="text" class="bgo-input" ng-model="param.rate2[1]">
+                                        <span class="label label-info">良好</span>
+                                    </li>
+                                    <li>
+                                        <input type="text" class="bgo-input" ng-model="param.rate3[0]">
+                                        -
+                                        <input type="text" class="bgo-input" ng-model="param.rate3[1]">
+                                        <span class="label label-warning">及格</span>
+                                    </li>
+                                    <li>
+                                        <input type="text" class="bgo-input" ng-model="param.rate4[0]">
+                                        -
+                                        <input type="text" class="bgo-input" ng-model="param.rate4[1]">
+                                        <span class="label label-danger">不及格</span>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="4">
+                                <button class="btn btn-primary bgo-button" ng-click="add()">添加</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div class="bgo-panel" ng-show="roleItems.index_school_getcourse">
+            <div class="bgo-panel-title">
+                <span>科目信息</span>
+            </div>
+            <table class="bgo-table" style="margin-top: 30px;">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">年级</th>
+                        <th style="width: 20%;">课程名称</th>
+                        <th style="width: 15%;">科目总分</th>
+                        <th style="width: 15%;">附加分</th>
+                        <th style="width: 30%;">分值区间</th>
+                        <th style="width: 5%;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="!data.data.length > 0" class="noData">
+                        <td colspan="6">暂无课程</td>
+                    </tr>
+                    <tr ng-repeat="d in data.data">
+                        <td>
+                            <span ng-bind="d.yearStr" ng-show="!d.isEdit"></span>
+                            <select class="bgo-select" 
+                                    ng-model="d.year" 
+                                    ng-options="dl.year as dl.yearStr for dl in listData"
+                                    ng-show="d.isEdit">
+                                    <option value="">-- 请选择 --</option>
+                            </select>
+                        </td>
+                        <td contenteditable="{{ d.isEdit ? true : false }}"
+                            ng-model="d.name" strip-br="true"
+                            ng-class="{ true: 'contenteditable-disabled' }[!d.isEdit]">
+                        </td>
+                        <td contenteditable="{{ d.isEdit ? true : false }}"
+                            ng-model="d.total_score" strip-br="true"
+                            ng-class="{ true: 'contenteditable-disabled' }[!d.isEdit]">
+                        </td>
+                        <td contenteditable="{{ d.isEdit ? true : false }}"
+                            ng-model="d.append_score" strip-br="true"
+                            ng-class="{ true: 'contenteditable-disabled' }[!d.isEdit]">
+                        </td>
+                        <td style="position: relative;">
+                            <ul class="score editScore" ng-show="d.isEdit" ng-class="{true: 'showEditScore'}[d.isEdit]">
+                                <li>
+                                    <input type="text" class="bgo-input" ng-model="d.rate1[0]">
+                                    -
+                                    <input type="text" class="bgo-input" ng-model="d.rate1[1]">
+                                    <span class="label label-success">优秀</span>
+                                </li>
+                                <li>
+                                    <input type="text" class="bgo-input" ng-model="d.rate2[0]">
+                                    -
+                                    <input type="text" class="bgo-input" ng-model="d.rate2[1]">
+                                    <span class="label label-info">良好</span>
+                                </li>
+                                <li>
+                                    <input type="text" class="bgo-input" ng-model="d.rate3[0]">
+                                    -
+                                    <input type="text" class="bgo-input" ng-model="d.rate3[1]">
+                                    <span class="label label-warning">及格</span>
+                                </li>
+                                <li>
+                                    <input type="text" class="bgo-input" ng-model="d.rate4[0]">
+                                    -
+                                    <input type="text" class="bgo-input" ng-model="d.rate4[1]">
+                                    <span class="label label-danger">不及格</span>
+                                </li>
+                            </ul>
+                            <div ng-show="!d.isEdit">
+                                <span class="label label-success" ng-bind="d.rate1"></span>
+                                <span class="label label-info" ng-bind="d.rate2"></span>
+                                <span class="label label-warning" ng-bind="d.rate3"></span>
+                                <span class="label label-danger" ng-bind="d.rate4"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" 
+                                    class="btn" 
+                                    ng-click="edit($index)" 
+                                    ng-class="{ true: 'btn-primary bgo-button', false: 'btn-success bgo-button' }[!d.isEdit]"
+                                    ng-bind="!d.isEdit ? '编辑' : '保存'"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--</scrollbar>-->
+    
+</div>

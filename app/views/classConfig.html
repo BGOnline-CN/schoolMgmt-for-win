@@ -1,0 +1,95 @@
+<div ng-controller="ClassConfigController">
+    <p>班级配置</p>
+    <!--<scrollbar>-->
+    <div style="overflow: auto;height: 500px;">
+        <div class="bgo-panel" ng-show="roleItems.index_school_createschoolclass">
+            <div class="bgo-panel-title">
+                <span>新增班级</span>
+            </div>
+            <form name="form" class="bgo-form" novalidate>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="form-title">班级名：</td>
+                            <td>
+                                <input type="text" class="bgo-input" ng-model="param.name" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-title">毕业年份：</td>
+                            <td>
+                                <select class="bgo-select" 
+                                        required
+                                        ng-model="param.grade_id" 
+                                        ng-options="dl.grade_id as dl.grade + '届' + dl.yearStr for dl in listData">
+                                        <option value="">-- 请选择 --</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button class="btn btn-primary bgo-button" ng-click="add()">添加</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div class="bgo-panel" ng-show="roleItems.index_school_getschoolclass">
+            <div class="bgo-panel-title">
+                <span>班级信息</span>
+            </div>
+            <table class="bgo-table" style="margin-top: 30px;">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">年级</th>
+                        <th style="width: 20%;">班级名</th>
+                        <th style="width: 20%;">毕业年份</th>
+                        <th style="width: 20%;">状态</th>
+                        <th style="width: 20%;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="!data.data.length > 0" class="noData">
+                        <td colspan="5">暂无班级</td>
+                    </tr>
+                    <tr ng-repeat="d in data.data">
+                        <td ng-bind="d.yearStr"></td>
+                        <td>
+                            <span ng-bind="d.name" ng-show="!d.isEdit"></span>
+                            <input type="text" class="bgo-input" ng-model="d.name" ng-show="d.isEdit">
+                        </td>
+                        <td>
+                            <span ng-bind="d.grade" ng-show="!d.isEdit"></span>
+                            <select class="bgo-select" 
+                                    ng-model="d.grade_id" 
+                                    ng-options="dl.grade_id as dl.grade + '届' + dl.yearStr for dl in listData"
+                                    ng-show="d.isEdit">
+                                    <option value="">-- 请选择 --</option>
+                            </select>
+                        </td>
+                        <td>
+                            <span ng-if="d.status == 1" style="color: green;">正常</span>
+                            <span ng-if="d.status == 2" style="color: gray">已毕业</span>
+                        </td>
+                        <td>
+                            <button type="button" 
+                                    class="btn" 
+                                    ng-click="edit($index)" 
+                                    ng-class="{ true: 'btn-primary bgo-button', false: 'btn-success bgo-button' }[!d.isEdit]"
+                                    ng-bind="!d.isEdit ? '编辑' : '保存'"></button>
+                            <button type="button" class="btn btn-danger bgo-button" ng-click="remove(d.class_id)">删除</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--</scrollbar>-->
+</div>

@@ -1,0 +1,23 @@
+<ul class="page clearfix">
+    <li ng-hide="currentPage <= 1">
+        <a href="" ng-click="firstPage()">
+            <i class="fa fa-step-backward"></i>
+        </a>
+        <a href="" ng-click="prePage()">
+            <i class="fa fa-play fa-flip-horizontal"></i>
+        </a>
+    </li>
+    <li>
+        <span>页码</span>
+        <input type="text" ng-model="currentPage">/
+        <span ng-bind="totalPage"></span>
+    </li>
+    <li ng-hide="currentPage >= totalPage">
+        <a href="" ng-click="nextPage()">
+            <i class="fa fa-play"></i>
+        </a>
+        <a href="" ng-click="lastPage()">
+            <i class="fa fa-step-forward"></i>
+        </a>
+    </li>
+</ul>

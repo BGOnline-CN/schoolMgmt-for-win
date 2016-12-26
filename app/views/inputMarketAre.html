@@ -1,0 +1,53 @@
+<div ng-controller="InputMarketAreController">
+    <p class="clearfix">
+        <span style="vertical-align: sub;">填写之后生成成绩总表</span>
+        <button type="button" class="btn btn-primary bgo-button-right" ng-click="save()">生成成绩总表</button>
+    </p>
+    <!--<scrollbar>-->
+        <div class="row" style="overflow: auto;height: 500px;">
+            <div class="col-xs-12 col-md-6" ng-repeat="d in data">
+                <div class="bgo-panel">
+                    <div class="bgo-panel-title">
+                        <span ng-bind="d.yearStr"></span>
+                        <span ng-bind="d.annual + '年度'"></span>
+                        <span ng-if="d.type == 1">上期</span>
+                        <span ng-if="d.type == 2">下期</span>
+                        <span ng-bind="d.test_name ? '《' + d.test_name + '》' : return"></span>
+                        <input type="checkbox" title="{{ isShow[$index] ? '暂不生成' : '确定生成'}}"
+                            style="float: right;" 
+                            ng-model="isShow[$index]" ng-init="isShow[$index] = true">
+                    </div>
+                    <div style="position: relative;">
+                        <div class="bgo-div-shade" ng-if="!isShow[$index]" style="text-align: center;padding-top: 50px;">
+                            <span style="color: #fff;font-size: .8em;">重新勾上开启生成</span>
+                        </div>
+                        <table class="bgo-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>市平均分</th>
+                                    <th>市优生率</th>
+                                    <th>市及格率</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="dc in d.courseData">
+                                    <td class="form-title" ng-bind="dc.name"></td>
+                                    <td contenteditable ng-model="dc.totalAvg" strip-br="true"></td>
+                                    <td contenteditable ng-model="dc.rate1" strip-br="true"></td>
+                                    <td contenteditable ng-model="dc.rate123" strip-br="true"></td>
+                                </tr>
+                                <tr>
+                                    <td class="form-title">总</td>
+                                    <td class="contenteditable-disabled"></td>
+                                    <td contenteditable ng-model="d.rate1" strip-br="true"></td>
+                                    <td contenteditable ng-model="d.rate123" strip-br="true"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!--</scrollbar>-->
+</div>

@@ -1,0 +1,100 @@
+<div ng-controller="QueryExamPlanController">
+    <p>考试计划查询</p>
+    <div class="bgo-panel">
+        <!--<ul class="bgo-control clearfix">
+            <li>
+                考试年级：
+                <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = -1">
+                    <option value="-1">-- 请选择 --</option>
+                    <option ng-repeat="s in listData.SchoolGrade" 
+                            ng-bind="s.yearStr" 
+                            value="{{ s }}"></option>
+                </select>
+            </li>
+            <li>
+                年度：
+                <select class="bgo-select" ng-model="param.annual" ng-init="param.annual = -1">
+                    <option value="-1">-- 请选择 --</option>
+                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                </select>
+            </li>
+            <li>
+                学期：
+                <select class="bgo-select" ng-model="param.type" ng-init="param.type = 0">
+                    <option value="0">-- 请选择 --</option>
+                    <option value="1">上学期</option>
+                    <option value="2">下学期</option>
+                </select>
+            </li>
+            <li>
+                <button type="button" class="btn btn-primary bgo-button" ng-click="search()">查询</button>
+            </li>
+        </ul>-->
+        <ul class="bgo-control clearfix">
+            <li>
+                年度：
+                <select class="bgo-select" ng-model="param.annual" style="padding: 6px 12px;">
+                    <option value="">-- 全部 --</option>
+                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                </select>
+            </li>
+            <li>
+                学期：
+                <select class="bgo-select" ng-model="param.type" ng-init="param.type = 0" style="padding: 6px 12px;">
+                    <option value="0">-- 请选择 --</option>
+                    <option value="1">上学期</option>
+                    <option value="2">下学期</option>
+                </select>
+            </li>
+            <li>
+                <div class="bgo-search">
+                    <input type="text" class="bgo-input" ng-model="param.test_name" style="padding: 5px 12px;" placeholder="请输入考试名称">
+                    <button type="button" class="btn btn-primary bgo-button" style="padding: 5px 12px;" ng-click="search()">查询</button>
+                </div>
+            </li>
+        </ul>
+        <!--<scrollbar>-->
+            <div style="overflow:auto;height: 400px">
+                <table class="bgo-table">
+                    <thead>
+                        <tr>
+                            <th>考试名称</th>
+                            <th>年度</th>
+                            <th>学期</th>
+                            <th>时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="!data.data" class="noData">
+                            <td colspan="5">暂无数据</td>
+                        </tr>
+                        <tr ng-repeat="d in data.data">
+                            <td>
+                                <span ng-bind="d.test_name"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="d.annual"></span>
+                            </td>
+                            <td>
+                                <span ng-if="d.type == 1">上学期</span>
+                                <span ng-if="d.type == 2">下学期</span>
+                            </td>
+                            <td>
+                                <span ng-bind="d.test_time * 1000 | date: 'yyyy-MM-dd'"></span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger bgo-button">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        <!--</scrollbar>-->
+    </div>
+</div>

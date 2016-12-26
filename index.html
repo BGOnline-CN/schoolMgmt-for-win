@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="BGONLINE">
+
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <meta name="description" content="{{app.description}}">
+   <meta name="keywords" content="">
+   <title data-ng-bind="::pageTitle()">ThinkTorch - 校园管理系统</title>
+   <!-- Bootstrap styles-->
+   <link rel="stylesheet" href="app/css/bootstrap.css" data-ng-if="!app.layout.isRTL">
+   <link rel="stylesheet" href="app/css/bootstrap-rtl.css" data-ng-if="app.layout.isRTL">
+   <!-- Application styles-->
+   <link rel="stylesheet" href="app/css/app.css" data-ng-if="!app.layout.isRTL">
+   <link rel="stylesheet" href="app/css/style.css" data-ng-if="!app.layout.isRTL">
+   <!-- Themes-->
+   <link rel="stylesheet" ng-href="{{app.layout.theme}}" data-ng-if="app.layout.theme">
+   <!--<script src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="101363257" data-redirecturi="http://www.thinktorch.com/othercallback/qc_callback.html" charset="utf-8"></script>-->
+</head>
+
+<body class="win-transparent" data-ng-class="{ 'layout-fixed' : app.layout.isFixed, 'aside-collapsed' : app.layout.isCollapsed, 'layout-boxed' : app.layout.isBoxed, 'layout-fs': app.useFullLayout, 'hidden-footer': app.hiddenFooter, 'layout-h': app.layout.horizontal, 'aside-float': app.layout.isFloat}">
+   <div data-ui-view="" data-autoscroll="false" class="wrapper"></div>
+   <script>
+        var gui = require('nw.gui'); 
+        var win = gui.Window.get();
+        var $win = window;
+        var $nav = document.body;
+        var dragging = false;
+        var mouse_x, mouse_y;
+        var win_x, win_y;
+        $nav.onmousedown = function(e) {
+            e = e.originalEvent || e;
+            var isbg = $(e.target).closest('header').length > 0;
+            if (!isbg) return;
+            dragging = true;
+            mouse_x = e.screenX;
+            mouse_y = e.screenY;
+            win_x = win.x;
+            win_y = win.y;
+        };
+
+        $win.onmousemove = function(e) {
+            if (!dragging) return;
+            win.x = win_x + (e.screenX - mouse_x);
+            win.y = win_y + (e.screenY - mouse_y);
+        };
+
+        $win.onmouseup = function() {
+            dragging = false;
+        };
+   </script>
+   <script src="app/js/base.js"></script>
+   <script src="app/js/app.js"></script>
+</body>
+</html>

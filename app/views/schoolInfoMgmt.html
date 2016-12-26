@@ -1,0 +1,39 @@
+<div ng-controller="SchoolInfoMgmtController">
+    <p>学校信息管理</p>
+    <div class="bgo-panel">
+        <div class="bgo-panel-title">
+            <span>学校基本信息</span>
+        </div>
+        <form name="form" class="bgo-form" novalidate>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="form-title">学校名称：</td>
+                        <td>
+                            <input type="text" class="bgo-input" ng-model="param.name" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-title">学校代码：</td>
+                        <td>
+                            <input type="text" class="bgo-input" ng-model="param.school_code" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-title">学校编码：</td>
+                        <td>
+                            <span ng-bind="param.school_id" style="margin-right: 15px;"></span>
+                            <button type="button" class="btn btn-default bgo-button" id="copy" ng-click="copyToClipboard(param.school_id)">复制</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button class="btn btn-primary bgo-button" ng-click="add()">确定</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

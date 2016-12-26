@@ -1,0 +1,16 @@
+<div class="role-div">
+    <ul class="clearfix" ng-repeat="u in userData" ng-init="parentIndex = $index">
+        <li class="role-first" ng-bind="u.yearStr"></li>
+        <li class="role-second clearfix" ng-repeat="uc in u.courseData" ng-init="otherIndex = $index">
+            <span ng-bind="uc.name"></span>
+            <div class="role-user" ng-mouseenter="showEdit(parentIndex, otherIndex)" ng-mouseleave="noEdit(parentIndex, otherIndex)">
+                <button ng-if="!uc.userName" type="button" class="btn btn-info bgo-button" style="border-radius: 20px;" ng-click="isShowLayer();setParam(u.grade_id, '', uc.course_id)">添加</button>
+                <button ng-if="uc.userName" type="button" class="btn btn-success bgo-button" style="border-radius: 20px;" ng-bind="uc.userName"></button>
+                <p class="edit-and-remove clearfix" ng-if="uc.userName && editArr[parentIndex][otherIndex]">
+                    <a href="" ng-click="isShowLayer();setParam(u.grade_id, '', uc.course_id)">修改</a>
+                    <a href="" ng-click="remove(uc.ctcg_id)">删除</a>
+                </p>
+            </div>
+        </li>
+    </ul>
+</div>
