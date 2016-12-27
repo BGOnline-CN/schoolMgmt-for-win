@@ -2111,17 +2111,24 @@ App.controller('GradeConfigController', ["$scope", 'ConnectApi', '$state', 'Para
     }
 
     $scope.remove = function(id) {
-        $scope.param.grade_id = id;
-        ConnectApi.start('post', 'index/school/delgrade', $scope.param).then(function(response) {
-            var data = ConnectApi.data({ res: response });
-            if(data.code == 200) {
-                layer.msg(data.msg);
-                getData();
-            }
-        }, function(x) { 
-            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
-                layer.closeAll();
+        layer.confirm('确定删除年级？', {
+            btn: ['确定','取消']
+        }, function() {
+            layer.closeAll();
+            $scope.param.grade_id = id;
+            ConnectApi.start('post', 'index/school/delgrade', $scope.param).then(function(response) {
+                var data = ConnectApi.data({ res: response });
+                if(data.code == 200) {
+                    layer.msg(data.msg);
+                    getData();
+                }
+            }, function(x) { 
+                layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                    layer.closeAll();
+                });
             });
+        }, function() {
+            layer.closeAll();
         });
     }
 
@@ -2440,13 +2447,13 @@ App.controller('SchoolRollController', ["$scope", 'ConnectApi', '$state', 'Param
 
     $scope.edit = function(student_id) {
         var isEdit = 1; // 修改
-        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name']);
+        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'class_id']);
         $state.go('app.studentStatusMgmt');
     }
 
     $scope.look = function(student_id) {
         var isEdit = 0; // 查看
-        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name']);
+        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'class_id']);
         $state.go('app.studentStatusMgmt');
     }
   
@@ -2487,6 +2494,7 @@ App.controller('StudentStatusMgmtController', ["$rootScope", "$scope", 'ConnectA
                 $scope.param.study_no = data.data.study_no;
                 $scope.param.tname = data.data.tname;
                 $scope.param.sex = data.data.sex;
+                $scope.param.status = data.data.status;
             }, function(x) { 
                 layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                     layer.closeAll();
@@ -2502,6 +2510,7 @@ App.controller('StudentStatusMgmtController', ["$rootScope", "$scope", 'ConnectA
                 $scope.param.study_no = data.data.study_no;
                 $scope.param.tname = data.data.tname;
                 $scope.param.sex = data.data.sex;
+                $scope.param.status = data.data.status;
                 $scope.param.class_id = data.data.class_id;
                 $scope.param.grade_id = data.data.grade_id;
             }, function(x) { 
@@ -2915,6 +2924,28 @@ App.controller('QueryExamPlanController', ["$rootScope", "$scope", 'ConnectApi',
         $scope.getData();
     }
 
+    $scope.remove = function(plan_id) {
+        $scope.param.plan_id = plan_id;
+        layer.confirm('确定删除考试计划？', {
+            btn: ['确定','取消']
+        }, function() {
+            layer.closeAll();
+            ConnectApi.start('post', 'index/testplan/delplan', $scope.param).then(function(response) {
+                var data = ConnectApi.data({ res: response });
+                if(data.code == 200) {
+                    layer.msg(data.msg);
+                    $scope.getData();
+                }
+            }, function(x) { 
+                layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                    layer.closeAll();
+                });
+            });
+        }, function() {
+            layer.closeAll();
+        });
+    }
+
 }]);
 
 
@@ -2966,6 +2997,8 @@ App.controller('ScoreEntryController', ["$rootScope", "$scope", 'ConnectApi', '$
     $scope.search = function() {
         if($scope.sData) {
             $scope.param.grade_id = $scope.sData.grade_id;
+        }else {
+            $scope.param.grade_id = 0;
         }
         $scope.current_page = 1;
         $scope.getData();
@@ -3046,9 +3079,11 @@ App.controller('ScoreStatsController', ["$rootScope", "$scope", 'ConnectApi', '$
         });
     }
 
-    $scope.scoreData = function(plan_id) {
+    $scope.isAppend = [];
+    $scope.scoreData = function(plan_id, i) {
         $scope.param.is_html = 1;
         $scope.param.plan_id = plan_id;
+        $scope.param.is_append = $scope.isAppend[i];
         var index = layer.load(2);
         ConnectApi.start('post', '/Index/Excelout/scoreSummary', $scope.param).then(function(response) {
             var data = ConnectApi.data({ res: response, _index: index });
@@ -3364,7 +3399,7 @@ App.controller('PermissionsMgmtController', ["$rootScope", "$scope", 'ConnectApi
             $scope.data = data.data;
             var timer = $timeout(function() {
                 layer.msg('保存成功！');
-                timer.cancel(timer);
+                $timeout.cancel(timer);
             }, 500);
         }, function(x) { 
             layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {

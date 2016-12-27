@@ -21,12 +21,13 @@
                         <th>性别</th>
                         <th>年级</th>
                         <th>班级</th>
+                        <th>状态</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-if="!data.data.length" class="noData">
-                        <td colspan="6">暂无数据</td>
+                        <td colspan="7">暂无数据</td>
                     </tr>
                     <tr ng-repeat="d in data.data">
                         <td ng-bind="d.study_no"></td>
@@ -38,12 +39,16 @@
                         <td ng-bind="d.yearStr"></td>
                         <td ng-bind="d.name"></td>
                         <td>
+                            <span ng-if="d.status == 1" style="color: #27C24C;">在读</span>
+                            <span ng-if="d.status != 1" style="color: #f05050;">非在读</span>
+                        </td>
+                        <td>
                             <button type="button" class="btn btn-info bgo-button" ng-click="edit(d.student_id)" ng-if="roleItems.index_student_setstudent">编辑</button>
                             <button type="button" class="btn btn-primary bgo-button" ng-click="look(d.student_id)" ng-if="roleItems.index_student_setstudent">查看</button>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="6">
+                        <td colspan="7">
                             <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
                         </td>
                     </tr>

@@ -68,11 +68,11 @@
                             <span ng-if="d.status == 2" style="color: gray">已毕业</span>
                         </td>
                         <td>
-                            <button type="button" 
+                            <!--<button type="button" 
                                     class="btn" 
                                     ng-click="edit($index)" 
                                     ng-class="{ true: 'btn-primary bgo-button', false: 'btn-success bgo-button' }[!d.isEdit]"
-                                    ng-bind="!d.isEdit ? '编辑' : '保存'"></button>
+                                    ng-bind="!d.isEdit ? '编辑' : '保存'"></button>-->
                             <button type="button" class="btn btn-danger bgo-button" ng-click="remove(d.grade_id)">删除</button>
                         </td>
                     </tr>

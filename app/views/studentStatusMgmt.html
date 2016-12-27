@@ -29,7 +29,18 @@
                         <td class="form-title">所在班级：</td>
                         <td>
                             <span ng-if="param.isEdit == 1 || param.isEdit == 0" ng-bind="param.yearStr + param.class_name"></span>
-                            <a ng-if="param.isEdit != 0" href="" ng-click="editClass()" ng-bind="!editClassType ? '如需修改请点击' : '取消修改'"></a>
+                            <!--<a ng-if="param.isEdit != 0" href="" ng-click="editClass()" ng-bind="!editClassType ? '如需修改请点击' : '取消修改'"></a>-->
+                        </td>
+                    </tr>
+                    <tr ng-if="param.isEdit == 1 || param.isEdit == 0">
+                        <td class="form-title">状态：</td>
+                        <td>
+                            <span>在读</span>
+                            <input type="radio" name="status" ng-model="param.status" value="1" >
+                            <!--<span>转班</span>
+                            <input type="radio" name="sex" ng-model="param.sex" value="2">-->
+                            <span>非在读</span>
+                            <input type="radio" name="status" ng-model="param.status" value="3">
                         </td>
                     </tr>
                     <tr ng-if="editClassType">

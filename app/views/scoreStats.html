@@ -19,8 +19,8 @@
             </li>
             <li>
                 年级：
-                <select class="bgo-select" ng-model="s" ng-change="getSg(s)">
-                    <option value="">-- 请选择 --</option>
+                <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0">
+                    <option value="0">-- 请选择 --</option>
                     <option ng-repeat="s in listData.SchoolGrade" 
                             ng-bind="s.yearStr" 
                             value="{{ s }}"></option>
@@ -68,6 +68,7 @@
                         <tr>
                             <th>考试名称</th>
                             <th>考试时间</th>
+                            <th>是否统计附加题</th>
                             <th>表数据</th>
                         </tr>
                     </thead>
@@ -79,7 +80,10 @@
                             <td ng-bind="p.test_name"></td>
                             <td ng-bind="p.test_time * 1000 | date: 'yyyy-MM-dd'"></td>
                             <td>
-                                <button class="btn btn-success bgo-button" ng-click="scoreData(p.plan_id)">生成</button>
+                                <input type="checkbox" ng-model="isAppend[$index]">
+                            </td>
+                            <td>
+                                <button class="btn btn-success bgo-button" ng-click="scoreData(p.plan_id, $index)">生成</button>
                             </td>
                         </tr>
                         <tr>

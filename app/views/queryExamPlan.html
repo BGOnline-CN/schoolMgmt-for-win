@@ -84,7 +84,7 @@
                                 <span ng-bind="d.test_time * 1000 | date: 'yyyy-MM-dd'"></span>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-danger bgo-button">删除</button>
+                                <button type="button" class="btn btn-danger bgo-button" ng-click="remove(d.plan_id)">删除</button>
                             </td>
                         </tr>
                         <tr>

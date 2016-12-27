@@ -18,7 +18,7 @@
                     <tr>
                         <td class="form-title">考试名称：</td>
                         <td>
-                            <input type="text" class="bgo-input" ng-model="param.test_name" required>
+                            <input type="text" class="bgo-input" ng-model="param.test_name" placeholder="请填写考试名称" required>
                         </td>
                         <td class="form-title">考试时间：</td>
                         <td>
@@ -45,8 +45,8 @@
                     <tr>
                         <td class="form-title">年级：</td>
                         <td>
-                            <select class="bgo-select" ng-model="s" ng-change="getSg(s)" required>
-                                <option value="">-- 请选择 --</option>
+                            <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0" required>
+                                <option value="0">-- 请选择 --</option>
                                 <option ng-repeat="s in listData.SchoolGrade" 
                                         ng-bind="s.yearStr" 
                                         value="{{ s }}"></option>

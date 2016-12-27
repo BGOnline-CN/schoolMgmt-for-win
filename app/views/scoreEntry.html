@@ -20,8 +20,8 @@
             </li>
             <li>
                 学期：
-                <select class="bgo-select" ng-model="param.type" ng-init="param.type = 0">
-                    <option value="0">-- 请选择 --</option>
+                <select class="bgo-select" ng-model="param.type" ng-init="param.type = ''">
+                    <option value="">-- 请选择 --</option>
                     <option value="1">上学期</option>
                     <option value="2">下学期</option>
                 </select>
@@ -68,11 +68,11 @@
                             <td>
                                 <span class="label label-info" ng-repeat="dc in d.courseData" ng-bind="dc.name" style="margin-right: 5px;"></span>
                             </td>
-                            <td ng-bind="d.test_time * 1000 | date : 'yyyy-MM-dd'"></td>
+                            <td ng-bind="d.test_time * 1000 | date : 'yy-MM-dd'"></td>
                             <td ng-bind="d.upload_user"></td>
                             <td>
                                 <span ng-if="!d.is_upload">无</span>
-                                <span ng-if="d.is_upload" ng-bind="d.upload_time * 1000 | date : 'yyyy-MM-dd hh:mm:ss'"></span>
+                                <span ng-if="d.is_upload" ng-bind="d.upload_time * 1000 | date : 'yy-MM-dd HH:mm'"></span>
                             </td>
                             <td>
                                 <a style="color: #FF902B; vertical-align: middle;" ng-if="!d.is_upload && roleItems.index_score_getscorelist" ng-click="goPage(d.plan_id, d.class_id)">成绩录入</a>
