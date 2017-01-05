@@ -71,90 +71,92 @@
                     <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
                 </div>
                 <!--<scrollbar>-->
-                <form class="bgo-form" style="overflow:auto;height: 300px;">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td class="form-title">真实姓名</td>
-                                <td>
-                                    <input type="text" class="bgo-input" ng-model="param.tname">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="form-title">性别：</td>
-                                <td>
-                                    <div class="bgo-radio">
-                                        <span>男</span>
-                                        <input type="radio" name="sex" ng-model="param.sex" value="1">
-                                        <span>女</span>
-                                        <input type="radio" name="sex" ng-model="param.sex" value="2">
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="form-title" style="min-width: 80px;">教学信息</td>
-                                <td>
-                                    <button class="btn btn-success bgo-button" ng-click="addTr()">+ 新增</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td style="padding: 0;">
-                                    <table class="bgo-table" style="min-width: 500px;">
-                                        <thead>
-                                            <tr>
-                                                <th>所教年级</th>
-                                                <th>班级</th>
-                                                <th>教学科目</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr ng-if="trArr.length < 1 && trData.length < 1">
-                                                <td colspan="4" class="noData">
-                                                    请添加教学信息
-                                                </td>
-                                            </tr>
-                                            <tr ng-repeat="tr in trData track by $index">
-                                                <td ng-bind="tr.yearStr"></td>
-                                                <td>
-                                                    <span class="label label-info" ng-repeat="c in tr.classData" ng-bind="c.name" style="margin-right: 5px;"></span>
-                                                </td>
-                                                <td ng-bind="tr.courseName"></td>
-                                            </tr>
-                                            <tr ng-repeat="tr in trArr track by $index" ng-init="parentIndex = $index">
-                                                <td>
-                                                    <select class="bgo-select" ng-model="s" ng-change="getSg(parentIndex, s)">
-                                                        <option value="0">-- 请选择 --</option>
-                                                        <option ng-repeat="s in searchData.SchoolGrade" 
-                                                                ng-bind="s.yearStr"
-                                                                value="{{ s }}"></option>
-                                                    </select>
-                                                </td>
-                                                <td style="position: relative;width: 200px;">
-                                                    <span class="label label-info" ng-repeat="c in classArr[parentIndex] track by $index" ng-bind="c.name" ng-if="!multShow[parentIndex]" style="margin-right: 5px;"></span>
-                                                    <div multiple-input index="parentIndex" list="sData[parentIndex].Class" ng-if="multShow[parentIndex]"></div>
-                                                </td>
-                                                <td>
-                                                    <select class="bgo-select" 
-                                                            ng-model="course_id[parentIndex]" 
-                                                            ng-options="t.course_id as t.name for t in sData[parentIndex].Course">
-                                                            <option value="">-- 请选择 --</option>
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="4">
-                                                    <button class="btn btn-primary bgo-button-right" ng-click="submit()" style="margin-left: 5px;">保存修改</button>
-                                                    <button type="button" class="btn btn-danger bgo-button-right" ng-click="removeTr()">删除</button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </form>
+                <div style="overflow: auto;height: 400px">
+                    <form class="bgo-form" style="overflow:auto;height: 300px;">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="form-title">真实姓名</td>
+                                    <td>
+                                        <input type="text" class="bgo-input" ng-model="param.tname">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="form-title">性别：</td>
+                                    <td>
+                                        <div class="bgo-radio">
+                                            <span>男</span>
+                                            <input type="radio" name="sex" ng-model="param.sex" value="1">
+                                            <span>女</span>
+                                            <input type="radio" name="sex" ng-model="param.sex" value="2">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="form-title" style="min-width: 80px;">教学信息</td>
+                                    <td>
+                                        <button class="btn btn-success bgo-button" ng-click="addTr()">+ 新增</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="padding: 0;">
+                                        <table class="bgo-table" style="min-width: 500px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>所教年级</th>
+                                                    <th>班级</th>
+                                                    <th>教学科目</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-if="trArr.length < 1 && trData.length < 1">
+                                                    <td colspan="4" class="noData">
+                                                        请添加教学信息
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat="tr in trData track by $index">
+                                                    <td ng-bind="tr.yearStr"></td>
+                                                    <td>
+                                                        <span class="label label-info" ng-repeat="c in tr.classData" ng-bind="c.name" style="margin-right: 5px;"></span>
+                                                    </td>
+                                                    <td ng-bind="tr.courseName"></td>
+                                                </tr>
+                                                <tr ng-repeat="tr in trArr track by $index" ng-init="parentIndex = $index">
+                                                    <td>
+                                                        <select class="bgo-select" ng-model="s" ng-change="getSg(parentIndex, s)">
+                                                            <option value="0">-- 请选择 --</option>
+                                                            <option ng-repeat="s in searchData.SchoolGrade" 
+                                                                    ng-bind="s.yearStr"
+                                                                    value="{{ s }}"></option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="position: relative;width: 200px;">
+                                                        <span class="label label-info" ng-repeat="c in classArr[parentIndex] track by $index" ng-bind="c.name" ng-if="!multShow[parentIndex]" style="margin-right: 5px;"></span>
+                                                        <div multiple-input index="parentIndex" list="sData[parentIndex].Class" ng-if="multShow[parentIndex]"></div>
+                                                    </td>
+                                                    <td>
+                                                        <select class="bgo-select" 
+                                                                ng-model="course_id[parentIndex]" 
+                                                                ng-options="t.course_id as t.name for t in sData[parentIndex].Course">
+                                                                <option value="">-- 请选择 --</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <button class="btn btn-primary bgo-button-right" ng-click="submit()" style="margin-left: 5px;">保存修改</button>
+                                                        <button type="button" class="btn btn-danger bgo-button-right" ng-click="removeTr()">删除</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
                 <!--</scrollbar>-->
             </div>
         </div>

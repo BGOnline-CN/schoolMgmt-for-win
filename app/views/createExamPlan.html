@@ -30,7 +30,7 @@
                         <td>
                             <select class="bgo-select" ng-model="param.annual" required>
                                 <option value="">-- 请选择 --</option>
-                                <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                                <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t | limitTo : 4"></option>
                             </select>
                         </td>
                         <td class="form-title">学期：</td>

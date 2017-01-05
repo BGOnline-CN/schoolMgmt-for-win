@@ -439,7 +439,7 @@ header {
     color: #000;
     margin-bottom: 20px;
 }
-.bgo-panel-con > div > div.bgo-tab-con > p.bgo-tab-con-list {
+.bgo-panel-con > div > div.bgo-tab-con > .bgo-tab-con-list {
     margin-bottom: 10px;
 }
 .bgo-panel-con > div > div.bgo-tab-con > p.bgo-tab-con-tip {
@@ -812,3 +812,16 @@ input.ng-pristine {
 a.loginClose:hover {
     background-color: red !important;
 }
+
+/* 图表 */
+.chart-row-title {
+    text-align: center;
+    font-size: 1.6em;
+    margin-top: 25px;
+} 
+.chart-title {
+    text-align: center;
+    padding: 10px;
+} 
+
+.chart-div { background-color: #fff; }

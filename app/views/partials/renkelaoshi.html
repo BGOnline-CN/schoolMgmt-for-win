@@ -4,7 +4,7 @@
         <li class="role-first" ng-bind="uc.name"></li>
         <li class="role-second clearfix" ng-repeat="ucc in uc.courseData">
             <span ng-bind="ucc.name"></span>
-            <div class="role-user" ng-mouseenter="showEdit(parentIndex, otherIndex, $index)" ng-mouseleave="noEdit(parentIndex, otherIndex, $index)">
+            <div class="role-user" ng-mouseenter="showEdit($event, parentIndex, otherIndex, $index)" ng-mouseleave="noEdit($event, parentIndex, otherIndex, $index)">
                 <button ng-if="!ucc.userName" type="button" class="btn btn-info bgo-button" style="border-radius: 20px;" ng-click="isShowLayer();setParam(u.grade_id, uc.class_id, ucc.course_id)">添加</button>
                 <button ng-if="ucc.userName" type="button" class="btn btn-success bgo-button" style="border-radius: 20px;" ng-bind="ucc.userName"></button>
                 <p class="edit-and-remove clearfix" ng-if="ucc.userName && editArr[parentIndex][otherIndex][$index]">

@@ -6,7 +6,7 @@
                 年度：
                 <select class="bgo-select" ng-model="param.annual">
                     <option value="">-- 请选择 --</option>
-                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t | limitTo : 4"></option>
                 </select>
             </li>
             <li>
@@ -38,8 +38,19 @@
         <div class="inset-table" style="border: solid #E2E2E2;border-width: 1px 0 1px 0;padding: 10px 0;">
             <!--<scrollbar style="padding-bottom: 15px;">-->
             <div ng-if="!data" class="noData">暂无数据</div>
-            <div style="overflow: auto;height: 350px;">
-                <div ng-if="data" ng-bind-html="data | to_trusted" style="width: 1500px;"></div>
+            <div class="chart-div" style="overflow: auto;height: 350px;">
+                <div ng-if="data && !isChart" ng-bind-html="data | to_trusted" style="width: 1500px;"></div>
+                <div class="row" ng-if="isChart" style="margin: 0;" ng-repeat="c in chartData track by $index">
+                    <p class="chart-row-title" ng-bind="c.course_name"></p>
+                    <div class="col-xs-6" ng-repeat="cv in c.val track by $index">
+                        <p class="chart-title" ng-bind="cv.series.name"></p>
+                        <canvas class="chart chart-bar"
+                                chart-data="cv.series.data"
+                                chart-labels="cv.labels" 
+                                chart-series="cv.series.name">
+                        </canvas>
+                    </div>
+                </div>
             </div>
             <!--</scrollbar>-->
             <form ng-if="data" style="margin-top: 15px;" class="clearfix" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/scoreSummary" method="post" style="display: inline-block;">
@@ -51,7 +62,12 @@
                 <input type="hidden" name="grade_id" ng-value="param.grade_id">
                 <input type="hidden" name="is_html" ng-value="param.is_html">
                 <input type="hidden" name="plan_id" ng-value="param.plan_id">
-                <button type="submit" class="btn btn-warning bgo-button-right" ng-click="download()">下载成绩表</button>
+                <button type="button" 
+                        class="btn btn-info bgo-button-right" 
+                        style="margin-left: 5px;" 
+                        ng-click="showChart()" ng-bind="isChart ? '查看成绩表' : '查看图表'"></button>
+                <button type="submit" ng-if="!isChart" class="btn btn-warning bgo-button-right" ng-click="download()">下载成绩表</button>
+                <button type="button" ng-if="isChart" class="btn btn-warning bgo-button-right" ng-click="downloadChart()">下载图表</button>
             </form>
         </div>
     </div>
@@ -74,7 +90,7 @@
                     </thead>
                     <tbody>
                         <tr ng-if="!planData.data.length > 0" class="noData">
-                            <td colspan="3">暂无数据</td>
+                            <td colspan="4">暂无数据</td>
                         </tr>
                         <tr ng-repeat="p in planData.data">
                             <td ng-bind="p.test_name"></td>
@@ -87,7 +103,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3">
+                            <td colspan="4">
                                 <div paging total-page="totalpage" current-page="current_page" get-data="search()"></div>
                             </td>
                         </tr>

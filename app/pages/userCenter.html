@@ -78,6 +78,7 @@
                 <div class="bgo-panel-title">
                     <img src="app/img/defaultHeader.png" ng-src="{{ param.header }}" class="bgo-header-circle" alt="头像" style="margin-right: 5px;">
                     欢迎您：<span ng-bind="param.user_name"></span>
+                    <!--<a ui-sref="page.login" style="float: right;margin-top: 10px;">安全退出</a>-->
                 </div>
                 <div class="bgo-panel-con" style="margin-top: 25px;">
                     <ul class="bgo-tab clearfix">
@@ -105,6 +106,22 @@
                             <p class="bgo-tab-con-list">
                                 真实姓名：<span ng-bind="data.tname"></span>
                             </p>
+                            <div class="bgo-tab-con-list">
+                                性别：
+                                <p ng-if="!isCSex" style="display: inline;">
+                                    <span ng-if="data.sex == 1">男</span>
+                                    <span ng-if="data.sex == 2">女</span>
+                                    <span ng-if="data.sex != 1 && data.sex != 2">保密</span>
+                                </p>
+                                <p ng-if="isCSex"  style="display: inline;" class="bgo-radio">
+                                    <span>男</span>
+                                    <input type="radio" name="sex" ng-model="data.sex" value="1">
+                                    <span>女</span>
+                                    <input type="radio" name="sex" ng-model="data.sex" value="2">
+                                </p>
+                                <a href="" ng-if="!isCSex" ng-click="changeSex()">修改</a>
+                                <a href="" ng-if="isCSex" ng-click="changeSex()">保存</a>
+                            </div>
                             <table class="bgo-inner-table" style="margin-top: 15px;">
                                 <thead>
                                     <tr>

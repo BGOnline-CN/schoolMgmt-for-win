@@ -2,7 +2,7 @@
     <ul class="clearfix" ng-repeat="u in userData" ng-init="parentIndex = $index">
         <li class="role-first" ng-bind="u.yearStr"></li>
         <li class="role-second clearfix">
-            <div class="role-user" ng-mouseenter="showEdit(parentIndex)" ng-mouseleave="noEdit(parentIndex)">
+            <div class="role-user" ng-mouseenter="showEdit($event, parentIndex)" ng-mouseleave="noEdit($event, parentIndex)">
                 <button ng-if="!u.userName" type="button" class="btn btn-info bgo-button" style="border-radius: 20px;" ng-click="isShowLayer();setParam(u.grade_id, '', '')">添加</button>
                 <button ng-if="u.userName" type="button" class="btn btn-success bgo-button" style="border-radius: 20px;" ng-bind="u.userName"></button>
                 <p class="edit-and-remove clearfix" ng-if="u.userName && editArr[parentIndex]">

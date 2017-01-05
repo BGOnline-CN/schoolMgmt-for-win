@@ -19,7 +19,7 @@
                                     ng-bind="yearTurngrade(param.grade, 6) + '年级'"></span>-->
                                 <select class="bgo-select" ng-model="param.grade" ng-init="param.grade = 0">
                                     <option value="0">-- 请选择 --</option>
-                                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t"></option>
+                                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t | limitTo : 4"></option>
                                 </select>
                             </td>
                         </tr>

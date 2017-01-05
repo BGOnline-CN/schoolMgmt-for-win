@@ -3,4 +3,38 @@
         欢迎使用！今天是
         <span ng-bind="clock.now/1000 | timeFilter"></span>
     </p>
+    <div class="row">
+        <div class="col-xs-6 col-md-4">
+            <div class="module-panel bgo-panel">
+                <ul>
+                    <li>
+                        <img src="app/img/teacher.png" alt="">
+                    </li>
+                    <li>
+                        <dl>
+                            <dt>教师</dt>
+                            <dd>本校师资团队共有人数</dd>
+                            <dd ng-bind="data.userNum + '人'"></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-4">
+            <div class="module-panel bgo-panel">
+                <ul>
+                    <li>
+                        <img src="app/img/student.png" alt="">
+                    </li>
+                    <li>
+                        <dl>
+                            <dt>学生</dt>
+                            <dd>本校学生数量人数</dd>
+                            <dd ng-bind="data.studentNum + '人'"></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>

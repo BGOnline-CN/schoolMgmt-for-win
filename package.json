@@ -1,12 +1,12 @@
 {
-  "name": "bgonline-admin",
+  "name": "current",
   "version": "0.0.1",
   "main": "index.html",
   "window": {
-    "title": "bgonline-admin",
+    "title": "current",
     "frame": false,
-    "width": 650,
-    "height": 550,
+    "width": 600,
+    "height": 480,
     "toolbar": false,
     "transparent": true,
     "icon": "app/img/favicon.ico",
