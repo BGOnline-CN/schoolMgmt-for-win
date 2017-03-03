@@ -876,9 +876,12 @@ a.loginClose:hover {
 }
 
 /* 多选插件的高度设置 */
-.istevenMultiSelect .multiSelect > button {
+.multiSelect {
+    position: relative;
+}
+.istevenMultiSelect > .multiSelect > button {
     min-height: 30px !important;
 }
-.istevenMultiSelect .multiSelect .buttonLabel {
+.istevenMultiSelect > .multiSelect .buttonLabel {
     padding: 0;
 }

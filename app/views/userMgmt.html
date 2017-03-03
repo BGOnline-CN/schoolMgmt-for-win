@@ -28,7 +28,7 @@
                         <td colspan="5">暂无数据</td>
                     </tr>
                     <tr ng-repeat="d in data.data">
-                        <td ng-bind="$index + 1"></td>
+                        <td ng-bind="($index + 1) * current_page"></td>
                         <td ng-bind="d.tname"></td>
                         <td>
                             <span ng-if="d.sex == 1">男</span>

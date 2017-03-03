@@ -99,7 +99,7 @@
                             <td colspan="{{ tableData.json.length + tableData.trOther.length/2 + 7 }}">暂无学生</td>
                         </tr>
                         <tr ng-repeat="d in listData.data" ng-init="parentIndex = $index">
-                            <td ng-bind="$index + 1" class="contenteditable-disabled"></td>
+                            <td ng-bind="($index + 1) * current_page" class="contenteditable-disabled"></td>
                             <td ng-bind="param.school_code" class="contenteditable-disabled"></td>
                             <td ng-bind="param.school_name" class="contenteditable-disabled"></td>
                             <td ng-bind="d.grade_name + d.class_name" class="contenteditable-disabled"></td>
