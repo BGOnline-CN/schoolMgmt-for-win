@@ -1,7 +1,7 @@
 <div ng-controller="ScoreEntryController">
     <p>成绩录入</p>
     <div class="bgo-panel">
-        <ul class="bgo-control clearfix" ng-if="roleItems.index_score_getplanlist">
+        <ul class="bgo-control clearfix">
             <li>
                 考试年级：
                 <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0">
@@ -75,8 +75,8 @@
                                 <span ng-if="d.is_upload" ng-bind="d.upload_time * 1000 | date : 'yy-MM-dd HH:mm'"></span>
                             </td>
                             <td>
-                                <a style="color: #FF902B; vertical-align: middle;" ng-if="!d.is_upload && roleItems.index_score_getscorelist" ng-click="goPage(d.plan_id, d.class_id)">成绩录入</a>
-                                <a style="color: #27C24C; vertical-align: middle;" ng-if="d.is_upload && roleItems.index_score_getscorelist" ng-click="goPage(d.plan_id, d.class_id)">已录入
+                                <a style="color: #FF902B; vertical-align: middle;" ng-if="!d.is_upload" ng-click="goPage(d.plan_id, d.class_id)">成绩录入</a>
+                                <a style="color: #27C24C; vertical-align: middle;" ng-if="d.is_upload" ng-click="goPage(d.plan_id, d.class_id)">已录入
                                     <span class="fa fa-pencil"></span>
                                 </a>
                                 <form class="downloadForm" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/studentScoreExcelOut" method="post" style="display: inline-block;">

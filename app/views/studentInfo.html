@@ -12,7 +12,7 @@
                 </select>
             </li>
             <li style="float: right;margin-right: 0;">
-                <button type="submit" class="btn btn-warning bgo-button" ng-click="isShowLayer();" ng-if="roleItems.index_excelin_studentgradeexcelin">按年级导入导出学籍</button>
+                <button type="submit" class="btn btn-warning bgo-button" ng-click="isShowLayer();upload(2)" ng-show="isAdmin">按年级导入导出学籍</button>
             </li>
         </ul>
         <!--<scrollbar>-->
@@ -29,7 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-if="!data.data" class="noData">
+                    <tr ng-if="!data.data.length > 0" class="noData">
                         <td colspan="6">暂无数据</td>
                     </tr>
                     <tr ng-repeat="d in data.data">
@@ -40,8 +40,8 @@
                         <td ng-bind="d.sex_2"></td>
                         <td>
                             <button type="button" class="btn btn-info bgo-button" ng-click="goPage(d.class_id)">详情</button>
-                            <button type="button" class="btn btn-success bgo-button" ng-click="add(d.grade_id, d.class_id, d.yearStr, d.name)" ng-if="roleItems.index_student_createstudent && d.Headmaster">新增学籍</button>
-                            <button type="button" class="btn btn-warning bgo-button" ng-click="isShowLayer();upload(1, d.class_id, d.yearStr, d.name);" ng-if="roleItems.index_student_createstudent && d.Headmaster">导入班级学籍</button>
+                            <button type="button" class="btn btn-success bgo-button" ng-click="add(d.grade_id, d.class_id, d.yearStr, d.name)" ng-show="isAdmin">新增学籍</button>
+                            <button type="button" class="btn btn-warning bgo-button" ng-click="isShowLayer();upload(1, d.class_id, d.yearStr, d.name);" ng-show="isAdmin">导入班级学籍</button>
                         </td>
                     </tr>
                     <tr>
@@ -70,7 +70,7 @@
                                 ng-bind="s.yearStr" 
                                 value="{{ s }}"></option>
                     </select>
-                    <form ng-if="downloadGrade_id" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/studentGradeExcelOut" method="post" style="display: inline-block;">
+                    <form ng-if="downloadGrade_id" action="http://schoolmsnew.thinktorch.cn/Index/Excelout/studentGradeExcelOut" method="get" style="display: inline-block;">
                         <input type="hidden" name="token" ng-value="param.token">
                         <input type="hidden" name="school_id" ng-value="param.school_id">
                         <input type="hidden" name="grade_id" ng-value="downloadGrade_id">
@@ -105,11 +105,11 @@
             </div>
             <div class="bgo-panel bgo-box-shadow" style="min-width: 700px;overflow-x: auto;" ng-show="isClass">
                 <div class="bgo-panel-title">
-                    <span style="color: orange;" ng-bind="'正在导入 ' + className + ' 数据！'"></span>
+                    <span style="color: orange;" ng-bind="'正在导入 ' + className + '班 数据！'"></span>
                     <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
                 </div>
                 <div class="bgo-panel-con">
-                    <form action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/studentClassExcelOut" method="post" style="display: inline-block;">
+                    <form action="http://schoolmsnew.thinktorch.cn/Index/Excelout/studentClassExcelOut" method="get" style="display: inline-block;">
                         <input type="hidden" name="token" ng-value="param.token">
                         <input type="hidden" name="school_id" ng-value="param.school_id">
                         <button type="submit" class="btn btn-primary bgo-button">下载班级模板</button>

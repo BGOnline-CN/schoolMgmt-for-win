@@ -32,18 +32,13 @@
         </ul>-->
         <ul class="bgo-control clearfix">
             <li>
-                年度：
-                <select class="bgo-select" ng-model="param.annual" style="padding: 6px 12px;">
-                    <option value="">-- 全部 --</option>
-                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t | limitTo : 4"></option>
-                </select>
-            </li>
-            <li>
-                学期：
-                <select class="bgo-select" ng-model="param.type" ng-init="param.type = 0" style="padding: 6px 12px;">
-                    <option value="0">-- 请选择 --</option>
-                    <option value="1">上学期</option>
-                    <option value="2">下学期</option>
+                考试类型：
+                <select class="bgo-select" 
+                        style="padding: 6px 12px;"
+                        ng-change="getSelect(2, type)"
+                        ng-model="type" 
+                        ng-options="t.type as t.name for t in typeSel">
+                    <option value="">-- 请选择 --</option>
                 </select>
             </li>
             <li>
@@ -55,40 +50,75 @@
         </ul>
         <!--<scrollbar>-->
             <div style="overflow:auto;height: 400px">
-                <table class="bgo-table">
+                <table class="bgo-table" style="table-layout:fixed; word-break: break-all; word-wrap: break-word;">
                     <thead>
                         <tr>
                             <th>考试名称</th>
-                            <th>年度</th>
-                            <th>学期</th>
-                            <th>时间</th>
-                            <th>操作</th>
+                            <!--<th>考试类型</th>-->
+                            <th>考试单位</th>
+                            <th>科目</th>
+                            <th>考试时间</th>
+                            <th>考号打乱</th>
+                            <!--<th>交叉阅卷</th>-->
+                            <th>阅卷老师</th>
+                            <th>创建时间</th>
+                            <th style="width: 180px;">操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-if="!data.data" class="noData">
-                            <td colspan="5">暂无数据</td>
+                            <td colspan="8">暂无数据</td>
                         </tr>
                         <tr ng-repeat="d in data.data">
                             <td>
-                                <span ng-bind="d.test_name"></span>
+                                <a ng-bind="d.test_name" ng-click="goPage(0, d.plan_id)"></a>
+                            </td>
+                            <!--<td>
+                                <span ng-bind="d.type"></span>
+                            </td>-->
+                            <td>
+                                <span ng-bind="d.gradeClass"></span>
                             </td>
                             <td>
-                                <span ng-bind="d.annual"></span>
-                            </td>
-                            <td>
-                                <span ng-if="d.type == 1">上学期</span>
-                                <span ng-if="d.type == 2">下学期</span>
+                                <span class="label label-info" 
+                                      style="margin: 0 5px 5px 0;cursor: pointer;float: left;"
+                                      ng-repeat="c in d.course track by $index" 
+                                      ng-bind="c.course_name"
+                                      title="{{c.course_name + '&#10;' +
+                                      '优：' + c.rate1 + '&#10;' +
+                                      '良：' + c.rate2 + '&#10;' +
+                                      '及：' + c.rate3 + '&#10;' +
+                                      '差：' + c.rate4 + '&#10;' +
+                                      '总：' + c.total + '&#10;' +
+                                      '附：' + c.append}}"></span>
                             </td>
                             <td>
                                 <span ng-bind="d.test_time * 1000 | date: 'yyyy-MM-dd'"></span>
                             </td>
                             <td>
+                                <span ng-if="d.is_randnumber == 0" style="color: green;">是</span>
+                                <span ng-if="d.is_randnumber == 1">否</span>
+                            </td>
+                            <!--<td>
+                                <span ng-if="d.is_marking == 1" style="color: green;">是</span>
+                                <span ng-if="d.is_marking == 0">否</span>
+                            </td>-->
+                            <td>
+                                <span ng-repeat="t in d.marking_teacher track by $index"
+                                      ng-bind="t"
+                                      style="margin-right: 5px;"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="d.add_time * 1000 | date: 'yyyy-MM-dd'"></span>
+                            </td>
+                            <td>
+                                <button ng-show="d.type == '全校考试'" type="button" class="btn btn-info bgo-button" ng-click="goPage(1, d.plan_id)">统计</button>
+                                <button ng-show="d.type == '年级考试'" type="button" class="btn btn-info bgo-button" ng-click="goPage(2, d.plan_id, d.grade_group)">统计</button>
                                 <button type="button" class="btn btn-danger bgo-button" ng-click="remove(d.plan_id)">删除</button>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="8">
                                 <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
                             </td>
                         </tr>

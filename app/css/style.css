@@ -99,7 +99,7 @@ header {
 
 /* radio */
 .bgo-radio {
-    vertical-align: middle;
+    vertical-align: sub;
     display: inline-block;
 }
 .bgo-radio input {
@@ -157,10 +157,11 @@ header {
 }
 .bgo-table td, .bgo-table th {
     font-weight: 500;
+    word-break: nowrap;
+    /*white-space: nowrap; */
     border: solid #E2E2E2; 
     border-width: 0px 1px 1px 0px; 
     padding: 10px 15px;
-    word-break: keep-all;
 }
 .bgo-table input, .bgo-table select {
     min-width: 0;
@@ -178,7 +179,7 @@ header {
 
 /* inner-table */
 .bgo-inner-table {
-    width: 100%;
+    width: auto;
     border: solid #F7F7F7; 
     border-width: 2px 0px 2px 0px;
 }
@@ -192,12 +193,14 @@ header {
 /* 自动表头表格 */
 .bgo-auto-table > thead > tr th{
     text-align: center;
-    padding: 5px 15px;
+    white-space:nowrap;
+    padding: 5px 10px;
 }
 .bgo-auto-table > tbody td{
     line-height: 30px;
+    white-space:nowrap;
     height: 30px;
-    padding: 0px 15px;
+    padding: 0px 10px;
 }
 
 
@@ -315,6 +318,7 @@ header {
 /* 数量选择器 */
 .bgo-num-select {
     display: inline-block;
+    vertical-align: middle;
 }
 .bgo-num-select > li {
     float: left;
@@ -794,7 +798,7 @@ header {
 
 /* div嵌入table */
 .inset-table table {
-    width: 100%;
+    min-width: 100%;
 }
 
 /* 表单验证 */
@@ -825,3 +829,56 @@ a.loginClose:hover {
 } 
 
 .chart-div { background-color: #fff; }
+
+/* addScore中的下拉选择器 去除border*/
+.statusSel {
+    width: 100%;
+    height: 100%;
+}
+.statusSel > button { 
+    width: 100%;
+    border: none; 
+}
+
+/* 排序 */
+.bgo-sort {
+    display: inline-block;
+    vertical-align: middle;
+    border: solid #DDDDDD;
+    border-width: 0 0 0 1px;
+}
+.bgo-sort > li {
+    float: left;
+    padding: 3px 12px;
+    position: relative;
+    border: solid #DDDDDD;
+    border-width: 1px 1px 1px 0;
+}
+.bgo-sort > li > .sort-touch {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.bgo-sort > li.selected {
+    background: #5BC0DE;
+    color: #fff;
+    border: solid #5BC0DE;
+    border-width: 1px 1px 1px 0;
+}
+.bgo-sort > li.selected > i {
+    color: #fff;
+}
+.bgo-sort > li > .sort-ico {
+    color: #ccc;
+    margin-left: 5px;   
+}
+
+/* 多选插件的高度设置 */
+.istevenMultiSelect .multiSelect > button {
+    min-height: 30px !important;
+}
+.istevenMultiSelect .multiSelect .buttonLabel {
+    padding: 0;
+}

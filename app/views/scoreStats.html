@@ -1,45 +1,74 @@
 <div ng-controller="ScoreStatsController">
     <p>点击查询后生成统计数据</p>
     <div class="bgo-panel">
-        <ul class="bgo-control clearfix">
-            <li>
-                年度：
-                <select class="bgo-select" ng-model="param.annual">
-                    <option value="">-- 请选择 --</option>
-                    <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t | limitTo : 4"></option>
-                </select>
-            </li>
-            <li>
-                学期：
-                <select class="bgo-select" ng-model="param.type">
-                    <option value="">-- 请选择 --</option>
-                    <option value="1">上学期</option>
-                    <option value="2">下学期</option>
-                </select>
-            </li>
-            <li>
-                年级：
-                <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0">
-                    <option value="0">-- 请选择 --</option>
-                    <option ng-repeat="s in listData.SchoolGrade" 
-                            ng-bind="s.yearStr" 
-                            value="{{ s }}"></option>
-                </select>
-            </li>
-            <li style="position: relative;min-width: 140px;width:auto;">
-                <span style="vertical-align: sub;">科目：</span>
-                <span class="label label-info" ng-repeat="c in classArr track by $index" ng-bind="c.name" ng-if="!multShow" style="margin-right: 5px;"></span>
-                <div multiple-input list="sData.Course" ng-if="multShow"></div>
-            </li>
-            <li>
-                <button type="button" class="btn btn-primary bgo-button" ng-click="isShowLayer();search()">查询</button>
-            </li>
-        </ul>
-        <div class="inset-table" style="border: solid #E2E2E2;border-width: 1px 0 1px 0;padding: 10px 0;">
+        <form name="filtSelect" novalidate>
+            <ul class="bgo-control clearfix">
+                <li>
+                    考试计划：
+                    <select class="bgo-select" 
+                            ng-change="getSelect()"
+                            ng-model="param.plan_id1" 
+                            ng-options="t.plan_id as t.test_name for t in selectData1"
+                            required>
+                        <option value="" ng-bind="selectData1 ? '-- 请选择 --' : '正在拉取数据..'"></option>
+                    </select>
+                </li>
+                <li>
+                    考试年级：
+                    <select class="bgo-select"
+                            ng-model="param.grade_id" 
+                            ng-options="t.val as t.name for t in selectData2.subGradeData"
+                            required>
+                        <option value="" ng-bind="selectData2.subGradeData ? '-- 请选择 --' : '等待拉取数据..'">-- 请选择 --</option>
+                    </select>
+                </li>
+                <li>
+                    <div isteven-multi-select
+                         class="istevenMultiSelect"
+                         ng-show="selectData2.course"
+                         helper-elements="filter"
+                         translation="localLang"
+                         input-model="selectData2.course"
+                         output-model="selectedCourse"
+                         button-label="course_name"
+                         item-label="course_name"
+                         max-height="200px"
+                         tick-property="ticked">
+                    </div>
+                </li>
+                <li>
+                    <span style="vertical-align: sub;">是否显示附加分：</span>
+                    <div class="bgo-radio" ng-init="param.is_append = 0">
+                        <span>是</span>
+                        <input type="radio" name="radio2" value="1" ng-model="param.is_append" style="vertical-align: inherit;">
+                        <span>否</span>
+                        <input type="radio" name="radio2" value="0" ng-model="param.is_append" style="vertical-align: inherit;">
+                    </div>
+                </li>
+                <!--<li>
+                    年级：
+                    <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0">
+                        <option value="0">-- 请选择 --</option>
+                        <option ng-repeat="s in listData.SchoolGrade" 
+                                ng-bind="s.yearStr" 
+                                value="{{ s }}"></option>
+                    </select>
+                </li>
+                <li style="position: relative;min-width: 140px;width:auto;">
+                    <span style="vertical-align: sub;">科目：</span>
+                    <span class="label label-info" ng-repeat="c in classArr track by $index" ng-bind="c.name" ng-if="!multShow" style="margin-right: 5px;"></span>
+                    <div multiple-input list="sData.Course" ng-if="multShow"></div>
+                </li>-->
+                <li>
+                    <button type="button" class="btn btn-primary bgo-button" ng-click="scoreData()">生成</button>
+                </li>
+            </ul>
+        </form>
+        <div class="inset-table" style="border: solid #E2E2E2;border-width: 1px 0 1px 0;padding-top: 10px;">
             <!--<scrollbar style="padding-bottom: 15px;">-->
             <div ng-if="!data" class="noData">暂无数据</div>
-            <div class="chart-div" style="overflow: auto;height: 350px;">
-                <div ng-if="data && !isChart" ng-bind-html="data | to_trusted" style="width: 1500px;"></div>
+            <div class="chart-div" style="overflow: auto;height: 340px;">
+                <div ng-if="data && !isChart" ng-bind-html="data | to_trusted"></div>
                 <div class="row" ng-if="isChart" style="margin: 0;" ng-repeat="c in chartData track by $index">
                     <p class="chart-row-title" ng-bind="c.course_name"></p>
                     <div class="col-xs-6" ng-repeat="cv in c.val track by $index">
@@ -53,12 +82,9 @@
                 </div>
             </div>
             <!--</scrollbar>-->
-            <form ng-if="data" style="margin-top: 15px;" class="clearfix" action="http://schoolms.thinktorch.cn/public/index.php/Index/Excelout/scoreSummary" method="post" style="display: inline-block;">
+            <form ng-if="data" style="margin-top: 15px;" class="clearfix" action="http://schoolmsnew.thinktorch.cn/Index/Excelout/scoreSummary" method="get" style="display: inline-block;">
                 <input type="hidden" name="token" ng-value="param.token">
                 <input type="hidden" name="school_id" ng-value="param.school_id">
-                <input type="hidden" name="course_id" ng-value="param.course_id">
-                <input type="hidden" name="annual" ng-value="param.annual">
-                <input type="hidden" name="type" ng-value="param.type">
                 <input type="hidden" name="grade_id" ng-value="param.grade_id">
                 <input type="hidden" name="is_html" ng-value="param.is_html">
                 <input type="hidden" name="plan_id" ng-value="param.plan_id">
@@ -71,7 +97,7 @@
             </form>
         </div>
     </div>
-    <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
+    <!--<div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
         <div class="col-xs-1"></div>
         <div class="col-xs-8">
             <div class="bgo-panel bgo-box-shadow">
@@ -112,5 +138,5 @@
             </div>
         </div>
         <div class="col-xs-3"></div>
-    </div>
+    </div>-->
 </div>

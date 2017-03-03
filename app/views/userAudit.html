@@ -12,55 +12,51 @@
                 </div>
             </li>
         </ul>
-        <!--<scrollbar>-->
-        <div style="overflow:auto;height: 400px">
-            <table class="bgo-table">
-                <thead>
-                    <tr>
-                        <th>序号</th>
-                        <th>姓名</th>
-                        <th>性别</th>
-                        <th>授课</th>
-                        <th>状态</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-if="!data.data.length > 0" class="noData">
-                        <td colspan="7">暂无数据</td>
-                    </tr>
-                    <tr ng-repeat="d in data.data">
-                        <td ng-bind="$index + 1"></td>
-                        <td ng-bind="d.tname"></td>
-                        <td>
-                            <span ng-if="d.sex == 1">男</span>
-                            <span ng-if="d.sex == 2">女</span>
-                            <span ng-if="d.sex != 1 && d.sex != 2">保密</span>
-                        </td>
-                        <td>
-                            <p ng-repeat="t in d.explain" style="margin: 0;">
-                                <span ng-bind="t.yearStr + '-' + t.courseName + '：'" style="margin-right: 2px;"></span>
-                                <span ng-repeat="m in t.classData" ng-bind="m.name" style="margin-right: 2px;"></span>
-                            </p>
-                        </td>
-                        <td>
-                            <span variety val="{{ d.statuss }}" cfg="cfg"></span>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary bgo-button" ng-click="isShowLayer();editUser($index, d.tname, d.ctcg_id, d.sex)">编辑</button>
-                            <button ng-if="d.status = 1" type="button" class="btn btn-success bgo-button" ng-click="applyUser(2, d.ctcg_id)">通过</button>
-                            <button ng-if="d.status = 1" type="button" class="btn btn-danger bgo-button" ng-click="applyUser(3, d.ctcg_id)">拒绝</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="7">
-                            <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!--</scrollbar>-->
+        <table class="bgo-table">
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>授课</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-if="!data.data.length > 0" class="noData">
+                    <td colspan="7">暂无数据</td>
+                </tr>
+                <tr ng-repeat="d in data.data">
+                    <td ng-bind="$index + 1"></td>
+                    <td ng-bind="d.tname"></td>
+                    <td>
+                        <span ng-if="d.sex == 1">男</span>
+                        <span ng-if="d.sex == 2">女</span>
+                        <span ng-if="d.sex != 1 && d.sex != 2">保密</span>
+                    </td>
+                    <td>
+                        <p ng-repeat="t in d.explain" style="margin: 0;">
+                            <span ng-bind="t.yearStr + '-' + t.courseName + '：'" style="margin-right: 2px;"></span>
+                            <span ng-repeat="m in t.classData" ng-bind="m.name" style="margin-right: 2px;"></span>
+                        </p>
+                    </td>
+                    <td>
+                        <span variety val="{{ d.statuss }}" cfg="cfg"></span>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary bgo-button" ng-click="isShowLayer();editUser($index, d.tname, d.ctcg_id, d.sex)">编辑</button>
+                        <button ng-if="d.status = 1" type="button" class="btn btn-success bgo-button" ng-click="applyUser(2, d.ctcg_id)">通过</button>
+                        <button ng-if="d.status = 1" type="button" class="btn btn-danger bgo-button" ng-click="applyUser(3, d.ctcg_id)">拒绝</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">
+                        <div paging total-page="totalpage" current-page="current_page" get-data="getData()"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <div class="row bgo-layer" ng-class="{ true: 'show-bgo-layer', false: 'close-bgo-layer' }[isShow]">
         <div class="col-xs-1"></div>

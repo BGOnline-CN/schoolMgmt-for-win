@@ -38,7 +38,14 @@
                     <em class="fa fa-cog"></em>
                     </a>
                 </li>-->
+
                 <li>
+                    <a ui-sref="page.login">
+                    <span style="color: #5d9cec">安全退出</span>
+                    </a>
+                </li>
+
+                <!--<li>
                     <a onclick="win.minimize();">
                     <em class="fa fa-minus"></em>
                     </a>
@@ -52,7 +59,7 @@
                     <a onclick="win.close();">
                     <em class="fa fa-close"></em>
                     </a>
-                </li>
+                </li>-->
                 <!-- END Offsidebar menu-->
             </ul>
             <!-- END Right Navbar-->
@@ -102,7 +109,7 @@
                                 <button type="button" class="btn btn-primary bgo-button-right">绑定</button>
                             </div>-->
                         </div>
-                        <div class="bgo-tab-con" ng-switch-when="1">
+                        <div class="bgo-tab-con" ng-switch-when="1" style="overflow: auto;height: 300px;">
                             <p class="bgo-tab-con-list">
                                 真实姓名：<span ng-bind="data.tname"></span>
                             </p>
@@ -122,7 +129,7 @@
                                 <a href="" ng-if="!isCSex" ng-click="changeSex()">修改</a>
                                 <a href="" ng-if="isCSex" ng-click="changeSex()">保存</a>
                             </div>
-                            <table class="bgo-inner-table" style="margin-top: 15px;">
+                            <table class="bgo-inner-table" style="margin-top: 15px;width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>就职学校</th>
@@ -132,11 +139,11 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="d in data.authArr">
-                                        <td ng-bind="d.name"></td>
+                                        <td ng-bind="d.name" style="vertical-align: top;"></td>
                                         <td>
                                             <p ng-repeat="da in d.auth track by $index" ng-bind="da"></p>
                                         </td>
-                                        <td>
+                                        <td style="vertical-align: top;">
                                             <button type="button" class="btn btn-primary bgo-button" ng-click="mgmt(d.school_id)">管理</button>
                                         </td>
                                     </tr>

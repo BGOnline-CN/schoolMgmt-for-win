@@ -1,8 +1,8 @@
 <div ng-controller="ClassConfigController">
     <p>班级配置</p>
     <!--<scrollbar>-->
-    <div style="overflow: auto;height: 500px;">
-        <div class="bgo-panel" ng-show="roleItems.index_school_createschoolclass">
+    <div style="overflow: auto;height: 500px;margin-top: 15px;">
+        <div class="bgo-panel" style="margin-top: 0;">
             <div class="bgo-panel-title">
                 <span>新增班级</span>
             </div>
@@ -12,7 +12,8 @@
                         <tr>
                             <td class="form-title">班级名：</td>
                             <td>
-                                <input type="text" class="bgo-input" ng-model="param.name" required>
+                                <div ng-init="param.name = 1" num-select num="param.name" max="20" min="1" str="班"></div>
+                                <span style="font-size: 1.6em;vertical-align: inherit;">班</span>
                             </td>
                         </tr>
                         <tr>
@@ -36,7 +37,7 @@
                 </table>
             </form>
         </div>
-        <div class="bgo-panel" ng-show="roleItems.index_school_getschoolclass">
+        <div class="bgo-panel">
             <div class="bgo-panel-title">
                 <span>班级信息</span>
             </div>
@@ -57,13 +58,13 @@
                     <tr ng-repeat="d in data.data">
                         <td ng-bind="d.yearStr"></td>
                         <td>
-                            <span ng-bind="d.name" ng-show="!d.isEdit"></span>
-                            <input type="text" class="bgo-input" ng-model="d.name" ng-show="d.isEdit">
+                            <span ng-bind="d.name + '班'" ng-show="!d.isEdit"></span>
+                            <div num-select num="d.name" max="20" min="1" ng-show="d.isEdit"></div>
                         </td>
                         <td>
                             <span ng-bind="d.grade" ng-show="!d.isEdit"></span>
                             <select class="bgo-select" 
-                                    ng-model="d.grade_id" 
+                                    ng-model="d.grade_id"
                                     ng-options="dl.grade_id as dl.grade + '届' + dl.yearStr for dl in listData"
                                     ng-show="d.isEdit">
                                     <option value="">-- 请选择 --</option>

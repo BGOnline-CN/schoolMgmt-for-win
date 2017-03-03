@@ -3,14 +3,17 @@
   "version": "0.0.1",
   "main": "index.html",
   "window": {
-    "title": "current",
-    "frame": false,
-    "width": 600,
-    "height": 480,
+    "title": "飞笔校园管理系统",
+    "frame": true,
+    "width": 500,
+    "height": 414,
     "toolbar": false,
-    "transparent": true,
-    "icon": "app/img/favicon.ico",
+    "icon": "app/img/icon.png",
     "show_in_taskbar": true,
-    "position": "center"
-  }
+    "position": "center",
+    "show": true,
+    "as_desktop": true,
+    "resizable": true
+  },
+  "description": "飞笔智能校园"
 }

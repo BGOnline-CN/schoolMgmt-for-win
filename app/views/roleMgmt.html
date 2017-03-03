@@ -1,5 +1,5 @@
 <div ng-controller="RoleMgmtController">
-    <p>角色管理</p>
+    <p>职务管理</p>
     <ul class="roleList clearfix">
         <li ng-repeat="d in roleData" 
             ng-class="{ true: 'select' }[isSelect[$index]]"
@@ -48,7 +48,7 @@
                     </div>
                     <a href="" ng-click="isShowLayer()" class="big-title" style="float: right;">X</a>
                 </div>
-                <table class="bgo-inner-table">
+                <table class="bgo-inner-table" style="width: 100%">
                     <thead>
                         <tr>
                             <th>教师姓名</th>

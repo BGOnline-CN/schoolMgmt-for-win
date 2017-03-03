@@ -1,71 +1,129 @@
 <div ng-controller="CreateExamPlanController">
     <p>创建考试计划</p>
-    <div class="bgo-panel">
-        <div class="bgo-panel-title">
-            <span>基本信息填写</span>
+    <div style="overflow: auto;height: 500px; margin-top: 15px;">
+        <div class="bgo-panel" style="margin-top: 0">
+            <div class="bgo-panel-title">
+                <span>基本信息填写</span>
+            </div>
+            <form name="form" class="bgo-form" novalidate>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 20%"></th>
+                            <th style="width: 30%"></th>
+                            <th style="width: 20%"></th>
+                            <th style="width: 30%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="form-title">考试名称：</td>
+                            <td>
+                                <input type="text" class="bgo-input" ng-model="param.test_name" placeholder="请填写考试名称" required>
+                            </td>
+                            <td class="form-title">考试时间：</td>
+                            <td>
+                                <input type="text" class="bgo-input" id="dpd1" placeholder="选择考试时间" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-title">考试类型：</td>
+                            <td>
+                                <select class="bgo-select" 
+                                        ng-change="getSelect(2, type)"
+                                        ng-model="type" 
+                                        ng-options="t.type as t.name for t in typeSel"
+                                        required>
+                                    <option value="">-- 请选择 --</option>
+                                </select>
+                            </td>
+                            <td class="form-title">考试单位：</td>
+                            <td>
+                                <select class="bgo-select"
+                                        ng-model="param.gradeclass_id" 
+                                        ng-options="t.gradeclass_id as t.name for t in unitSel"
+                                        required>
+                                    <option value="">-- 请选择 --</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-title" style="vertical-align: text-top;">考试科目：</td>
+                            <td colspan="3">
+                                请勾选考试科目，并填写对应分值区间（注意：区间由 ‘ - ’ 隔开！）
+                                <table class="bgo-table">
+                                    <thead> 
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" ng-model="select_all" ng-change="selectAll()">
+                                            </th>
+                                            <th></th>
+                                            <th style="width: 80px;color: green;">优秀</th>
+                                            <th style="width: 80px;color: cadetblue;">良好</th>
+                                            <th style="width: 80px;color: orange;">及格</th>
+                                            <th style="width: 80px;color: red;">不及格</th>
+                                            <th>总分</th>
+                                            <th>附加分</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="i in course">
+                                            <td>
+                                                <input type="checkbox" ng-model="i.checked" ng-change="selectOne()">
+                                            </td>
+                                            <td ng-bind="i.course_name"></td>
+                                            <td contenteditable ng-model="i.rate1" strip-br="true"></td>
+                                            <td contenteditable ng-model="i.rate2" strip-br="true"></td>
+                                            <td contenteditable ng-model="i.rate3" strip-br="true"></td>
+                                            <td contenteditable ng-model="i.rate4" strip-br="true"></td>
+                                            <td contenteditable ng-model="i.total" strip-br="true"></td>
+                                            <td contenteditable ng-model="i.append" strip-br="true"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-title">阅卷老师：</td>
+                            <td colspan="3">
+                                <!--<div class="bgo-radio" ng-init="param.is_marking = 1">
+                                    <span>是</span>
+                                    <input type="radio" name="radio1" value="1" ng-model="param.is_marking">
+                                    <span>否</span>
+                                    <input type="radio" name="radio1" value="0" ng-model="param.is_marking" ng-click="clearSelectedTeacher()">
+                                </div>-->
+                                <div isteven-multi-select
+                                        helper-elements="filter"
+                                        translation="localLang"
+                                        input-model="teacher"
+                                        output-model="selectedTeacher"
+                                        button-label="tname"
+                                        item-label="tname"
+                                        max-height="200px"
+                                        tick-property="ticked">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="form-title">考号打乱：</td>
+                            <td colspan="3">
+                                <div class="bgo-radio" ng-init="param.is_randnumber = 1">
+                                    <span>否</span>
+                                    <input type="radio" name="radio2" value="1" ng-model="param.is_randnumber">
+                                    <span>是</span>
+                                    <input type="radio" name="radio2" value="0" ng-model="param.is_randnumber">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="3">
+                                <button type="button" class="btn btn-primary bgo-button" ng-click="add()">添加</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         </div>
-        <form name="form" class="bgo-form" novalidate>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 20%"></th>
-                        <th style="width: 30%"></th>
-                        <th style="width: 20%"></th>
-                        <th style="width: 30%"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="form-title">考试名称：</td>
-                        <td>
-                            <input type="text" class="bgo-input" ng-model="param.test_name" placeholder="请填写考试名称" required>
-                        </td>
-                        <td class="form-title">考试时间：</td>
-                        <td>
-                            <input type="text" class="bgo-input" id="dpd1" placeholder="选择考试时间" readonly>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="form-title">年度：</td>
-                        <td>
-                            <select class="bgo-select" ng-model="param.annual" required>
-                                <option value="">-- 请选择 --</option>
-                                <option ng-repeat="t in yearSelect" ng-bind="t" ng-value="t | limitTo : 4"></option>
-                            </select>
-                        </td>
-                        <td class="form-title">学期：</td>
-                        <td>
-                            <select class="bgo-select" ng-model="param.type" required>
-                                <option value="">-- 请选择 --</option>
-                                <option value="1">上学期</option>
-                                <option value="2">下学期</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="form-title">年级：</td>
-                        <td>
-                            <select class="bgo-select" ng-model="s" ng-change="getSg(s)" ng-init="s = 0" required>
-                                <option value="0">-- 请选择 --</option>
-                                <option ng-repeat="s in listData.SchoolGrade" 
-                                        ng-bind="s.yearStr" 
-                                        value="{{ s }}"></option>
-                            </select>
-                        </td>
-                        <td class="form-title">考试科目：</td>
-                        <td style="position: relative;max-width: 200px;">
-                            <span class="label label-info" ng-repeat="c in classArr track by $index" ng-bind="c.name" ng-if="!multShow" style="float: left;margin: 5px;"></span>
-                            <div multiple-input list="sData.Course" ng-if="multShow"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td colspan="3">
-                            <button type="button" class="btn btn-primary bgo-button" ng-click="add()">添加</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
     </div>
 </div>

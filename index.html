@@ -6,7 +6,8 @@
    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
    <meta name="description" content="{{app.description}}">
    <meta name="keywords" content="">
-   <title data-ng-bind="::pageTitle()">ThinkTorch - 校园管理系统</title>
+   <!--<title data-ng-bind="::pageTitle()">ThinkTorch - 校园管理系统</title>-->
+   <title>ThinkTorch - 校园管理系统</title>
    <!-- Bootstrap styles-->
    <link rel="stylesheet" href="app/css/bootstrap.css" data-ng-if="!app.layout.isRTL">
    <link rel="stylesheet" href="app/css/bootstrap-rtl.css" data-ng-if="app.layout.isRTL">
@@ -23,31 +24,31 @@
    <script>
         var gui = require('nw.gui'); 
         var win = gui.Window.get();
-        var $win = window;
-        var $nav = document.body;
-        var dragging = false;
-        var mouse_x, mouse_y;
-        var win_x, win_y;
-        $nav.onmousedown = function(e) {
-            e = e.originalEvent || e;
-            var isbg = $(e.target).closest('header').length > 0;
-            if (!isbg) return;
-            dragging = true;
-            mouse_x = e.screenX;
-            mouse_y = e.screenY;
-            win_x = win.x;
-            win_y = win.y;
-        };
+        // var $win = window;
+        // var $nav = document.body;
+        // var dragging = false;
+        // var mouse_x, mouse_y;
+        // var win_x, win_y;
+        // $nav.onmousedown = function(e) {
+        //     e = e.originalEvent || e;
+        //     var isbg = $(e.target).closest('header').length > 0;
+        //     if (!isbg) return;
+        //     dragging = true;
+        //     mouse_x = e.screenX;
+        //     mouse_y = e.screenY;
+        //     win_x = win.x;
+        //     win_y = win.y;
+        // };
 
-        $win.onmousemove = function(e) {
-            if (!dragging) return;
-            win.x = win_x + (e.screenX - mouse_x);
-            win.y = win_y + (e.screenY - mouse_y);
-        };
+        // $win.onmousemove = function(e) {
+        //     if (!dragging) return;
+        //     win.x = win_x + (e.screenX - mouse_x);
+        //     win.y = win_y + (e.screenY - mouse_y);
+        // };
 
-        $win.onmouseup = function() {
-            dragging = false;
-        };
+        // $win.onmouseup = function() {
+        //     dragging = false;
+        // };
    </script>
    <script src="vendor/angular-chart/Chart.js"></script>
    <script src="app/js/base.js"></script>

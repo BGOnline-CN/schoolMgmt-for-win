@@ -13,7 +13,7 @@ if (typeof $ === 'undefined') { throw new Error('This application\'s JavaScript 
 // ----------------------------------- 
 
 var App = angular.module('BGONLINE', [
-    'ngRoute',
+    'ngRoute', 
     'ngAnimate',
     'ngStorage',
     'ngCookies',
@@ -33,8 +33,8 @@ App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', f
     $rootScope.$stateParams = $stateParams;
     $rootScope.$storage = $window.localStorage;
 
-    $rootScope.rootUrl = 'http://schoolms.thinktorch.cn/public/index.php/';
-    // $rootScope.rootUrl = 'http://192.168.1.200/201611SchoolMS/public/index.php/';
+    $rootScope.rootUrl = 'http://schoolmsnew.thinktorch.cn/';
+    // $rootScope.rootUrl = 'http://192.168.1.200/201702SchoolMS/public/index.php/';
     // 禁用模板缓存
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (typeof(toState) !== 'undefined'){
@@ -128,7 +128,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         url: '/scoreStats',
         title: '年级成绩统计',
         templateUrl: helper.basepath('scoreStats.html'),
-        resolve: helper.resolveFor('chart.js', 'html2canvas')
+        resolve: helper.resolveFor('chart.js', 'html2canvas', 'isteven-multi-select')
     })
     .state('app.scoreStatsAll', {
         url: '/scoreStatsAll',
@@ -168,7 +168,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         url: '/createExamPlan',
         title: '创建考试计划',
         templateUrl: helper.basepath('createExamPlan.html'),
-        resolve: helper.resolveFor('jquery', 'datepicker') 
+        resolve: helper.resolveFor('jquery', 'datepicker', 'contenteditable', 'isteven-multi-select') 
     })
     .state('app.queryExamPlan', {
         url: '/queryExamPlan',
@@ -418,7 +418,7 @@ App
                              'vendor/datepicker/js/foundation-datepicker.js',
                              'vendor/datepicker/js/locales/foundation-datepicker.zh-CN.js'],
       'layer':              ['vendor/layer/layer.js'],
-      'html2canvas':        ['vendor/html2canvas/html2canvas.js']       
+      'html2canvas':        ['vendor/html2canvas/html2canvas.js']
     },
     // Angular based script (use the right module name)
     modules: [
@@ -430,7 +430,9 @@ App
                                          'vendor/scrollbar/smooth-scrollbar.js',
                                          'vendor/scrollbar/angular-smooth-scrollbar.js']},
       { name: 'chart.js', files: ['vendor/angular-chart/Chart.js',
-                                  'vendor/angular-chart/angular-chart.js']}
+                                  'vendor/angular-chart/angular-chart.js']},
+      { name: 'isteven-multi-select', files: ['vendor/angular-multi-select/isteven-multi-select.css',
+                          'vendor/angular-multi-select/isteven-multi-select.js']}
     ]
 
   })
@@ -604,7 +606,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
           var data = ConnectApi.data({ res: response });
           if(data.code == 200) {
               $scope.menuItems = data.data.Menu;
-              $rootScope.roleItems = data.data.userAuth;
+              $rootScope.isAdmin = data.data.isAdmin;
           }
       }, function(x) { 
           layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
@@ -620,8 +622,6 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
     //     .error(function(data, status, headers, config) {
     //       alert('菜单获取失败！');
     //     });
-
-       win.setPosition("center");
     };
 
      $scope.loadSidebarMenu();
@@ -1332,7 +1332,7 @@ App.directive('bgoSelect', function() { // 下拉选择器
                   '</div>',
         controller: function($scope, ParamTransmit) {
             $scope.getVal = function(val) {
-                ParamTransmit.setParam({ val });
+                ParamTransmit.setParam({ val }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'plan_id', 'school_code']);
             }
         }
                 
@@ -1359,7 +1359,7 @@ App.directive('inputAutoSubmit', function() { // 输入框自动提交
                 if(newVal != oldVal && newVal) {
                     if(timeout) $timeout.cancel(timeout);
                     timeout = $timeout(function() {
-                        eval('ParamTransmit.setParam({ "' + $scope.key + '": ' + $scope.val + ' }, ["token", "user_name", "header", "school_id"])');
+                        eval('ParamTransmit.setParam({ "' + $scope.key + '": ' + $scope.val + ' }, ["token", "user_name", "header", "school_id", "school_code"])');
                         $scope.means();
                     }, 2000);
                 }
@@ -1412,23 +1412,28 @@ App.directive('numSelect', function() { // 数量选择器
         restrict: 'A', 
         replace: true,
         scope: {
+            max: '@max', // 最大值
+            min: '@min', // 最小值
             num: '=num'
         },
         template: '<ul class="bgo-num-select clearfix">'+
                     '<li>'+
                         '<button class="btn btn-default" ng-click="changeNum(0)">-</button>'+
                     '</li>'+
-                    '<li><input type="text" ng-model="num" ng-pattern="/^[0-9]{0,6}$/"></li>'+
+                    '<li><input type="text" ng-model="num" ng-pattern="/^[0-9]{0,6}$/" required style="text-align: center;"></li>'+
                     '<li>'+
                         '<button class="btn btn-default" ng-click="changeNum(1)">+</button>'+
                     '</li>'+
                 '</ul>',
         controller: function($scope) {
-            $scope.changeNum = function(t) {
-                t ? $scope.num += 1 : $scope.num -= 1;
+            $scope.changeNum = function(temp) {
+                if(temp) {
+                    if(parseInt($scope.num++) >= $scope.max) $scope.num = $scope.max;
+                }else {
+                    if(parseInt($scope.num--) <= $scope.min) $scope.num = $scope.min;
+                }
             }
         }
-
     }
         
 });
@@ -1695,10 +1700,12 @@ App.factory('ParamTransmit', function() {
 
       getParam: function() { return paramJson(); },
 
-      removeParam: function(key) {
+      removeParam: function(key) { // key是一个数组 可同时删除多个key
          var param = paramJson();
-         var delExpr = 'delete param.' + key;
-         eval(delExpr);
+         for(var i = 0; i < key.length; i++) {
+            var delExpr = 'delete param.' + key[i];
+            eval(delExpr);
+         }
          sessionStorage.setItem('paramSession', JSON.stringify(param));
          return paramJson();
       },
@@ -1762,9 +1769,8 @@ App.controller('LoginController', ["$rootScope", "$scope", 'ConnectApi', '$state
 
     ParamTransmit.clearParam();
     $scope.param = localStorage.remember ? JSON.parse(localStorage.remember) : {};
-    win.resizeTo(600, 480);
-    win.setMinimumSize(600, 480);
-    angular.element('body').addClass('win-transparent');
+    win.resizeTo(500, 414);
+    // angular.element('body').addClass('win-transparent');
     $scope.go = function() {
       var index = layer.load(2);
       ConnectApi.start('post', 'index/login/login', $scope.param).then(function(response) {
@@ -1786,10 +1792,9 @@ App.controller('LoginController', ["$rootScope", "$scope", 'ConnectApi', '$state
               var header = $scope.data.header;
               var school_id = $scope.data.jump.school_id;
               var school_name = $scope.data.jump.school_name;
-              ParamTransmit.setParam({ token, user_name, header, school_id, school_name }, ['token', 'user_name', 'header', 'school_id', 'school_name']);
-              win.enterFullscreen();
-              win.setMinimumSize(1280, 720);
-              angular.element('body').removeClass('win-transparent');
+              var school_code = $scope.data.jump.school_code;
+              ParamTransmit.setParam({ token, user_name, header, school_id, school_name, school_code }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
+            //   angular.element('body').removeClass('win-transparent');
               $scope.data.jump.is_site ? $state.go('app.home') : $state.go('page.schoolList');
           }
       }, function(x) { 
@@ -1805,7 +1810,8 @@ App.controller('LoginController', ["$rootScope", "$scope", 'ConnectApi', '$state
 
 // 注册
 App.controller('RegistController', ["$rootScope", "$scope", 'ConnectApi', '$state', 'ParamTransmit', function($rootScope, $scope, ConnectApi, $state, ParamTransmit) {
-
+    
+    win.resizeTo(500, 454);
     $scope.go = function() {
       var index = layer.load(2);
       ConnectApi.start('post', 'index/login/register', $scope.param).then(function(response) {
@@ -1818,10 +1824,8 @@ App.controller('RegistController', ["$rootScope", "$scope", 'ConnectApi', '$stat
             var token = $scope.data.token;
             var user_name = $scope.data.user_name;
             var header = $scope.data.header;
-            ParamTransmit.setParam({ token, user_name, header }, ['token', 'user_name', 'header']);
-            win.enterFullscreen();
-            win.setMinimumSize(1280, 720);
-            angular.element('body').removeClass('win-transparent');
+            ParamTransmit.setParam({ token, user_name, header }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
+            // angular.element('body').removeClass('win-transparent');
             $state.go('page.schoolList');
           }
       }, function(x) { 
@@ -1945,6 +1949,8 @@ App.controller('SchoolListController', ["$rootScope", "$scope", 'ConnectApi', '$
 
 // 首页
 App.controller('HomeController', ["$rootScope", "$scope", 'ConnectApi', '$state', 'ParamTransmit', '$timeout', function($rootScope, $scope, ConnectApi, $state, ParamTransmit, $timeout) {
+
+    win.resizeTo(1280, 735);
 
     $scope.clock = {};
     var clockFunction = function() {
@@ -2204,8 +2210,10 @@ App.controller('ClassConfigController', ["$scope", 'ConnectApi', '$state', 'Para
         if($scope.form.$valid) {
             ConnectApi.start('post', 'index/school/createschoolclass', $scope.param).then(function(response) {
                 var data = ConnectApi.data({ res: response });
-                layer.msg(data.msg);
-                $scope.getData();
+                if(data.code == 200) {
+                    layer.msg(data.msg);
+                    $scope.getData();
+                }
             }, function(x) { 
                 layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                     layer.closeAll();
@@ -2228,8 +2236,10 @@ App.controller('ClassConfigController', ["$scope", 'ConnectApi', '$state', 'Para
             param.name = indexData.name;
             ConnectApi.start('post', 'index/school/setschoolclass', param).then(function(response) {
                 var data = ConnectApi.data({ res: response });
-                layer.msg(data.msg);
-                $scope.getData();
+                if(data.code == 200) {
+                    layer.msg(data.msg);
+                    $scope.getData();
+                }
             }, function(x) { 
                 layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                     layer.closeAll();
@@ -2360,7 +2370,7 @@ App.controller('StudentInfoController', ["$rootScope", "$scope", 'ConnectApi', '
     $scope.getData();
 
     $scope.goPage = function(class_id) {
-        ParamTransmit.setParam({class_id}, ['token', 'user_name', 'header', 'school_id', 'school_name']);
+        ParamTransmit.setParam({ class_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
         $state.go('app.schoolRoll');
     }
 
@@ -2371,7 +2381,7 @@ App.controller('StudentInfoController', ["$rootScope", "$scope", 'ConnectApi', '
 
     $scope.add = function(grade_id, class_id, yearStr, class_name) {
         var isEdit = 2; // 新增
-        ParamTransmit.setParam({ isEdit, grade_id, class_id, yearStr, class_name }, ['token', 'user_name', 'header', 'school_id', 'school_name']);
+        ParamTransmit.setParam({ isEdit, grade_id, class_id, yearStr, class_name }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
         $state.go('app.studentStatusMgmt');
     }
 
@@ -2409,13 +2419,15 @@ App.controller('StudentInfoController', ["$rootScope", "$scope", 'ConnectApi', '
 
     uploader1.onSuccessItem = function(response) {
         $scope.uploadData = JSON.parse(response._xhr.response);
-        if( $scope.uploadData.code != 200 ) {
+        if($scope.uploadData.code != 200 ) {
             layer.alert($scope.uploadData.msg, {icon: 5}, function() {
                 layer.closeAll(); 
+                $state.reload();
             })
         }else {
             layer.alert($scope.uploadData.msg, {icon: 6}, function() {
                 layer.closeAll(); 
+                $state.reload();
             }) 
         }
     };
@@ -2433,13 +2445,15 @@ App.controller('StudentInfoController', ["$rootScope", "$scope", 'ConnectApi', '
 
     uploader2.onSuccessItem = function(response) {
         $scope.uploadData = JSON.parse(response._xhr.response);
-        if( $scope.uploadData.code != 200 ) {
+        if($scope.uploadData.code != 200 ) {
             layer.alert($scope.uploadData.msg, {icon: 5}, function() {
-                layer.closeAll(); 
+                layer.closeAll();
+                $state.reload(); 
             })
         }else {
             layer.alert($scope.uploadData.msg, {icon: 6}, function() {
                 layer.closeAll(); 
+                $state.reload();
             }) 
         }
     };
@@ -2468,19 +2482,19 @@ App.controller('SchoolRollController', ["$scope", 'ConnectApi', '$state', 'Param
 
     $scope.search = function() {
         $scope.current_page = 1;
-        ParamTransmit.removeParam("class_id");
+        ParamTransmit.removeParam(["class_id"]);
         $scope.getData();
     }
 
     $scope.edit = function(student_id) {
         var isEdit = 1; // 修改
-        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'class_id']);
+        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'class_id', 'school_code']);
         $state.go('app.studentStatusMgmt');
     }
 
     $scope.look = function(student_id) {
         var isEdit = 0; // 查看
-        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'class_id']);
+        ParamTransmit.setParam({ isEdit, student_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'class_id', 'school_code']);
         $state.go('app.studentStatusMgmt');
     }
   
@@ -2772,74 +2786,129 @@ App.controller('CreateExamPlanController', ["$rootScope", "$scope", 'ConnectApi'
         checkin.hide();
     }).data('datepicker');
 
-    $scope.yearSelect = [];
-    for(var i = nowTemp.getFullYear() - 5; i <= nowTemp.getFullYear() + 5; i++) { // 生成年度选择框
-        $scope.yearSelect.push(i + ' - ' + parseInt(parseInt(i) + 1));
-    }
+    // $scope.yearSelect = [];
+    // for(var i = nowTemp.getFullYear() - 5; i <= nowTemp.getFullYear() + 5; i++) { // 生成年度选择框
+    //     $scope.yearSelect.push(i + ' - ' + parseInt(parseInt(i) + 1));
+    // }
 
     $scope.param = ParamTransmit.getParam();
-    $scope.param.plan_select = true;
-    ConnectApi.start('post', 'index/select/getschoolgcc', $scope.param).then(function(response) { // 获取年级下拉框
-        var data = ConnectApi.data({ res: response });
-        $scope.listData = data.data;
-    }, function(x) { 
-        layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
-            layer.closeAll();
-        });
-    });
 
-    var getData = function() {
+    $scope.getSelect = function(sel, type) {
+        $scope.param.type = type;
         var index = layer.load(2);
-        ConnectApi.start('post', 'index/testplan/getplanlist', $scope.param).then(function(response) {
+        ConnectApi.start('post', 'index/Select/getUserGradeClass', $scope.param).then(function(response) {
             var data = ConnectApi.data({ res: response, _index: index });
-            $scope.data = data.data;
+            if(sel == 1) {
+                $scope.typeSel = data.data; // 考试类型
+            }else if(sel == 2) {
+                $scope.unitSel = data.data; // 考试单位
+            }
         }, function(x) { 
             layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                 layer.closeAll();
             });
         });
     }
-    getData();
-    
-    $rootScope.multShow = false;
-    $scope.sData = [];
-    $rootScope.classArr = [];
-    $scope.sData.Course = [];
-    $scope.getSg = function(s) {
-        $scope.sData = JSON.parse(s);
-        $rootScope.classArr = [];
-        $rootScope.multShow = $scope.sData.Course.length > 0 ? true : false;
+    $scope.getSelect(1);
+
+    var getCourse = function() {
+        var index = layer.load(2);
+        ConnectApi.start('post', 'index/Select/getcourse', $scope.param).then(function(response) {
+            var data = ConnectApi.data({ res: response, _index: index });
+            $scope.course = data.data;
+        }, function(x) { 
+            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                layer.closeAll();
+            });
+        });
+    }
+    getCourse();
+
+    $scope.checked = [];
+    $scope.selectAll = function () {
+        if($scope.select_all) {
+            $scope.checked = [];
+            angular.forEach($scope.course, function (i) {
+                i.checked = true;
+                $scope.checked.push(i);
+            })
+        }else {
+            angular.forEach($scope.course, function (i) {
+                i.checked = false;
+                $scope.checked = [];
+            })
+        }
+        console.log($scope.checked);
+    };
+    $scope.selectOne = function () {
+        angular.forEach($scope.course , function (i) {
+            var index = $scope.checked.indexOf(i);
+            if(i.checked && index === -1) {
+                $scope.checked.push(i);
+            }else if(!i.checked && index !== -1){
+                $scope.checked.splice(index, 1);
+            };
+        })
+        if($scope.course.length === $scope.checked.length) {
+            $scope.select_all = true;
+        }else {
+            $scope.select_all = false;
+        }
+        console.log($scope.checked);
     }
 
-    $scope.param.course_id = [];
-    $scope.add = function() {
-        if($scope.form.$valid) {
-            $scope.param.grade_id = $scope.sData.grade_id;
-            $scope.param.test_time = $('#dpd1').val();
-            for(var i = 0; i < $rootScope.classArr.length; i++) {
-                if($rootScope.classArr[i]) {
-                    $scope.param.course_id.push($rootScope.classArr[i].course_id);
-                }
-            }
-
-            ConnectApi.start('post', 'index/testplan/createplan', $scope.param).then(function(response) {
-                var data = ConnectApi.data({ res: response });
-                $scope.data = data.data;
-                if(data.code == 200) {
-                    layer.alert(data.msg, {icon: 6}, function() {
-                        layer.closeAll(); 
-                    }) 
-                    $state.go('app.queryExamPlan');
-                }
-            }, function(x) { 
-                layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
-                    layer.closeAll();
-                });
+    var getTeacher = function() { // 获取教师数据
+        var index = layer.load(2);
+        ConnectApi.start('post', 'index/select/getTeacher', $scope.param).then(function(response) { 
+            var data = ConnectApi.data({ res: response, _index: index });
+            $scope.teacher = data.data;
+        }, function(x) { 
+            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                layer.closeAll();
             });
+        });
+    }
+    getTeacher();
+    
+    $scope.localLang = {
+        search: "输入教师姓名",
+        nothingSelected : "请选择阅卷老师" 
+    }
+
+    $scope.add = function() {
+        $scope.param.marking_teacher = [];
+        angular.forEach($scope.selectedTeacher, function(i) {    
+            $scope.param.marking_teacher.push(i.user_id)
+        });
+
+        $scope.param.course = $scope.checked;
+        if($scope.form.$valid) {
+            if($scope.param.course.length < 1) {
+                layer.alert("请至少选择一个科目进行考试！", {icon: 5}, function() {
+                    layer.closeAll(); 
+                })
+            }else {
+                $scope.param.test_time = $('#dpd1').val();
+                console.log($scope.param)
+                var index = layer.load(2);
+                ConnectApi.start('post', 'index/testplan/createplan', $scope.param).then(function(response) {
+                    var data = ConnectApi.data({ res: response, _index: index });
+                    $scope.data = data.data;
+                    if(data.code == 200) {
+                        layer.alert(data.msg, {icon: 6}, function() {
+                            layer.closeAll(); 
+                        }) 
+                        $state.go('app.queryExamPlan');
+                    }
+                }, function(x) { 
+                    layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                        layer.closeAll();
+                    });
+                });
+            }
         }else {
             layer.msg('请完善表单信息！', {icon: 5});
         }
-        
     }
 
     
@@ -2916,7 +2985,7 @@ App.controller('UserCenterController', ["$rootScope", "$scope", 'ConnectApi', '$
     }
 
     $scope.mgmt = function(school_id) {
-        ParamTransmit.setParam({ school_id }, ['token', 'user_name', 'header', 'school_id', 'school_name']);
+        ParamTransmit.setParam({ school_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
         $state.go('app.home');
     }
 
@@ -2933,6 +3002,24 @@ App.controller('QueryExamPlanController', ["$rootScope", "$scope", 'ConnectApi',
     //     var data = ConnectApi.data({ res: response });
     //     $scope.listData = data.data;
     // });
+
+    $scope.getSelect = function(sel, type) {
+        $scope.param.type = type;
+        var index = layer.load(2);
+        ConnectApi.start('post', 'index/Select/getUserGradeClass', $scope.param).then(function(response) {
+            var data = ConnectApi.data({ res: response, _index: index });
+            if(sel == 1) {
+                $scope.typeSel = data.data; // 考试类型
+            }else if(sel == 2) {
+                $scope.unitSel = data.data; // 考试单位
+            }
+        }, function(x) { 
+            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                layer.closeAll();
+            });
+        });
+    }
+    $scope.getSelect(1);
 
     $scope.current_page = 1;
     $scope.getData = function() {
@@ -2956,12 +3043,12 @@ App.controller('QueryExamPlanController', ["$rootScope", "$scope", 'ConnectApi',
     //     $scope.sData = JSON.parse(s);
     // }
 
-    var nowTemp = new Date();
+    // var nowTemp = new Date();
 
-    $scope.yearSelect = [];
-    for(var i = nowTemp.getFullYear() - 5; i <= nowTemp.getFullYear() + 5; i++) {// 生成年度选择框
-        $scope.yearSelect.push(i + ' - ' + parseInt(parseInt(i) + 1));
-    }
+    // $scope.yearSelect = [];
+    // for(var i = nowTemp.getFullYear() - 5; i <= nowTemp.getFullYear() + 5; i++) {// 生成年度选择框
+    //     $scope.yearSelect.push(i + ' - ' + parseInt(parseInt(i) + 1));
+    // }
 
     $scope.search = function() {
         $scope.current_page = 1;
@@ -2969,6 +3056,27 @@ App.controller('QueryExamPlanController', ["$rootScope", "$scope", 'ConnectApi',
         $scope.getData();
     }
 
+    /**
+     * 0 考试详情
+     * 1 全校考试统计 plan_id
+     * 2 年级考试统计 plan_id grade_group
+     */
+    $scope.goPage = function(we, plan_id, grade_group) {
+        ParamTransmit.setParam({ plan_id, grade_group }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
+        switch(we) {
+            case 0: 
+                $state.go('app.addScore');
+                break;
+            case 1: 
+                $state.go('app.scoreStatsAll');
+                break;
+            case 2: 
+                $state.go('app.scoreStats');
+                break;
+        }
+        
+    }
+    
     $scope.remove = function(plan_id) {
         $scope.param.plan_id = plan_id;
         layer.confirm('确定删除考试计划？', {
@@ -3050,7 +3158,7 @@ App.controller('ScoreEntryController', ["$rootScope", "$scope", 'ConnectApi', '$
     }
 
     $scope.goPage = function(plan_id, class_id) {
-        ParamTransmit.setParam({ plan_id, class_id }, ['token', 'user_name', 'header', 'school_id', 'school_name']);
+        ParamTransmit.setParam({ plan_id, class_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
         $state.go('app.addScore');
     }
 
@@ -3065,86 +3173,130 @@ App.controller('ScoreEntryController', ["$rootScope", "$scope", 'ConnectApi', '$
 App.controller('ScoreStatsController', ["$rootScope", "$scope", 'ConnectApi', '$state', 'ParamTransmit', '$timeout', function($rootScope, $scope, ConnectApi, $state, ParamTransmit, $timeout) {
 
     $scope.param = ParamTransmit.getParam();
+    $scope.param.type = 1; // 年级成绩统计
 
-    ConnectApi.start('post', 'index/select/getschoolgcc', $scope.param).then(function(response) { // 获取年级下拉框
-        var data = ConnectApi.data({ res: response });
-        $scope.listData = data.data;
-    }, function(x) { 
-        layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
-            layer.closeAll();
-        });
-    });
-
-
-    var nowTemp = new Date();
-    var years = nowTemp.getFullYear();
-    $scope.yearSelect = [];
-    for(var i = years - 5; i <= years + 5; i++) {// 生成年度选择框
-        $scope.yearSelect.push(i + ' - ' + parseInt(parseInt(i) + 1));
-    }
-
-    $rootScope.multShow = false;
-    $rootScope.classArr = [];
-    $scope.sData = [];
-    $scope.getSg = function(s) {
-        $scope.sData = JSON.parse(s);
-        if($scope.sData.grade_id) {
-            $scope.param.grade_id = $scope.sData.grade_id;
-        }
-        $rootScope.multShow = $scope.sData.Course.length > 0 ? true : false;
-    }
-
-    // 弹层显示
-    $scope.isShowLayer = function() {
-        $scope.isShow = $scope.isShow ? false : true;
-    }
-
-
-    $scope.current_page = 1;
-    $scope.search = function() {
-        $scope.param.p = 6;
-        $scope.param.course_id = [];
-        $scope.param.page = $scope.current_page;
-        if($scope.param.class_id) delete $scope.param.class_id;
-        if($scope.param.plan_id) delete $scope.param.plan_id;
-        
-        for(var i = 0; i < $rootScope.classArr.length; i++) {
-            if($rootScope.classArr[i]) {
-                $scope.param.course_id.push($rootScope.classArr[i].course_id);
-            }
-        }
-        ConnectApi.start('post', 'index/testplan/getplanlist', $scope.param).then(function(response) {
+    $scope.getSelect = function() { // 获取筛选框下拉框
+        angular.element('.bgo-select').attr('disabled', true);    
+        ConnectApi.start('post', 'index/report/getplanlist', $scope.param).then(function(response) { 
             var data = ConnectApi.data({ res: response });
-            $scope.planData = data.data;
-            $scope.totalpage = data.data.total_page;
+            if(data.code == 200) {
+                if(!$scope.param.plan_id1) {
+                    $scope.selectData1 = data.data;
+                }else {
+                    $scope.selectData2 = data.data;
+                }
+                angular.element('.bgo-select').attr('disabled', false);
+            }
         }, function(x) { 
             layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                 layer.closeAll();
             });
         });
     }
+    $scope.getSelect();
 
-    $scope.isAppend = [];
-    $scope.scoreData = function(plan_id, i) {
-        $scope.param.is_html = 1;
-        $scope.param.plan_id = plan_id;
-        $scope.param.is_append = $scope.isAppend[i];
-        delete $scope.param.is_graphical;
+    // layer.alert("请先选择考试计划与考试年级！", {
+    //     closeBtn: 0, 
+    //     icon: 0,
+    //     offset: '200px',
+    //     area: '300px',
+    //     title: '提示',
+    //     btn: '知道了'
+    // });
+
+    // ConnectApi.start('post', 'index/select/getschoolgcc', $scope.param).then(function(response) { // 获取年级下拉框
+    //     var data = ConnectApi.data({ res: response });
+    //     $scope.listData = data.data;
+    // }, function(x) { 
+    //     layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+    //         layer.closeAll();
+    //     });
+    // });
+
+    // var nowTemp = new Date();
+    // var years = nowTemp.getFullYear();
+    // $scope.yearSelect = [];
+    // for(var i = years - 5; i <= years + 5; i++) {// 生成年度选择框
+    //     $scope.yearSelect.push(i + ' - ' + parseInt(parseInt(i) + 1));
+    // }
+
+    // $rootScope.multShow = false;
+    // $rootScope.classArr = [];
+    // $scope.sData = [];
+    // $scope.getSg = function(s) {
+    //     $scope.sData = JSON.parse(s);
+    //     if($scope.sData.grade_id) {
+    //         $scope.param.grade_id = $scope.sData.grade_id;
+    //     }
+    //     $rootScope.multShow = $scope.sData.Course.length > 0 ? true : false;
+    // }
+
+    // // 弹层显示
+    // $scope.isShowLayer = function() {
+    //     $scope.isShow = $scope.isShow ? false : true;
+    // }
+
+
+    // $scope.current_page = 1;
+    // $scope.search = function() {
+    //     $scope.param.p = 6;
+    //     $scope.param.course_id = [];
+    //     $scope.param.page = $scope.current_page;
+    //     if($scope.param.class_id) delete $scope.param.class_id;
+    //     if($scope.param.plan_id) delete $scope.param.plan_id;
+        
+    //     for(var i = 0; i < $rootScope.classArr.length; i++) {
+    //         if($rootScope.classArr[i]) {
+    //             $scope.param.course_id.push($rootScope.classArr[i].course_id);
+    //         }
+    //     }
+    //     ConnectApi.start('post', 'index/testplan/getplanlist', $scope.param).then(function(response) {
+    //         var data = ConnectApi.data({ res: response });
+    //         $scope.planData = data.data;
+    //         $scope.totalpage = data.data.total_page;
+    //     }, function(x) { 
+    //         layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+    //             layer.closeAll();
+    //         });
+    //     });
+    // }
+
+    $scope.param.is_html = 1;
+    var getExcel = function() {
         var index = layer.load(2);
+        $scope.param.is_graphical = 0; // 表格
         ConnectApi.start('post', '/Index/Excelout/scoreSummary', $scope.param).then(function(response) {
             var data = ConnectApi.data({ res: response, _index: index });
-            if(!data.code) {
-                $scope.isShowLayer();
-                $scope.data = data;
-                $scope.isChart = false;
-            }
+            // $scope.isShowLayer();
+            $scope.data = data;
+            $scope.isChart = false;
+            
         }, function(x) { 
             layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                 layer.closeAll();
             });
         });
     }
-    
+    getExcel();
+
+    $scope.localLang = {
+        search: "输入科目名称",
+        nothingSelected : "请选择考试科目" 
+    }
+
+    $scope.scoreData = function() {
+        $scope.param.course = [];
+        if($scope.filtSelect.$valid && $scope.selectedCourse.length > 0) {
+            angular.forEach($scope.selectedCourse, function(i) {    
+                $scope.param.course.push(i.course_id)
+            });
+            $scope.param.plan_id = $scope.param.plan_id1
+            getExcel();
+        }else {
+            layer.msg('条件不足无法进行数据统计！', {icon: 5});
+        }
+    }
+
     $scope.download = function() {
         $scope.param.is_html = 0;
     }
@@ -3154,7 +3306,7 @@ App.controller('ScoreStatsController', ["$rootScope", "$scope", 'ConnectApi', '$
         $scope.isChart = !$scope.isChart;
         if($scope.isChart) {
             $scope.param.is_graphical = 1; // 图表
-            ConnectApi.start('post', '/index/Report/ReportSelect', $scope.param).then(function(response) {
+            ConnectApi.start('post', '/Index/Excelout/scoreSummary', $scope.param).then(function(response) {
                 var data = ConnectApi.data({ res: response });
                 if(data.code == 200) {
                     $scope.chartData = data.data;
@@ -3199,59 +3351,17 @@ App.controller('ScoreStatsController', ["$rootScope", "$scope", 'ConnectApi', '$
 /* 全校数据统计 */ 
 App.controller('ScoreStatsAllController', ["$rootScope", "$scope", 'ConnectApi', '$state', 'ParamTransmit', function($rootScope, $scope, ConnectApi, $state, ParamTransmit) {
 
-    $scope.param = ParamTransmit.getParam();
+    $scope.param = ParamTransmit.removeParam(['data', 'plan_id']);
     $scope.data = $scope.param.scoreData;
-    $scope.plan_id = $scope.param.plan_id;
     $scope.scoreAll = JSON.stringify($scope.param.scoreAll);
 
-    var nowTemp = new Date();
-    var years = nowTemp.getFullYear();
-    $scope.yearSelect = [];
-    for(var i = years - 5; i <= years + 5; i++) {// 生成年度选择框
-        $scope.yearSelect.push(i + ' - ' + parseInt(parseInt(i) + 1));
-    }
-
-    // 弹层显示
-    $scope.isShowLayer = function() {
-        $scope.isShow = $scope.isShow ? false : true;
-    }
-
-    $scope.current_page = 1;
-    $scope.search = function() {
-        $scope.param.p = 6;
-        $scope.param.page = $scope.current_page;
-        if($scope.param.class_id) delete $scope.param.class_id;
-        if($scope.param.plan_id) delete $scope.param.plan_id;
-        
-        ConnectApi.start('post', 'index/testplan/getplanlist', $scope.param).then(function(response) {
+    var getPlanList = function() {
+        angular.element('.bgo-select').attr('disabled', true);    
+        ConnectApi.start('post', 'index/report/getplanlist', $scope.param).then(function(response) {
             var data = ConnectApi.data({ res: response });
-            $scope.planData = data.data;
-            $scope.totalpage = data.data.total_page;
-        }, function(x) { 
-            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
-                layer.closeAll();
-            });
-        });
-    }
-
-
-    $scope.scoreData = function(plan_id) {
-        $scope.param.plan_id = plan_id;
-        var index = layer.load(2);
-        ConnectApi.start('post', 'index/Report/actiongetplanselect', $scope.param).then(function(response) {
-            var data = ConnectApi.data({ res: response, _index: index });
-            data.plan_id = plan_id;
             if(data.code == 200) {
-                layer.confirm('预处理数据成功，前往生成数据？', {
-                    btn: ['确定','取消']
-                }, function() {
-                    layer.closeAll();
-                    ParamTransmit.setParam( data, ['token', 'user_name', 'header', 'school_id', 'school_name']);
-                    $state.go('app.inputMarketAre');
-                }, function() {
-                    layer.closeAll();
-                });
-                $scope.isShowLayer();
+                $scope.selectData1 = data.data;
+                angular.element('.bgo-select').attr('disabled', false);
             }
         }, function(x) { 
             layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
@@ -3259,6 +3369,36 @@ App.controller('ScoreStatsAllController', ["$rootScope", "$scope", 'ConnectApi',
             });
         });
     }
+    getPlanList();
+
+    $scope.scoreData = function() {
+        var index = layer.load(2);
+        ConnectApi.start('post', 'index/Report/actiongetplanselect', $scope.param).then(function(response) {
+            var data = ConnectApi.data({ res: response, _index: index });
+            data.plan_id = $scope.param.plan_id;
+            if(data.code == 200) {
+                layer.confirm('预处理数据成功，前往生成数据？', {
+                    btn: ['确定','取消']
+                }, function() {
+                    layer.closeAll();
+                    ParamTransmit.setParam( data, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
+                    $state.go('app.inputMarketAre');
+                }, function() {
+                    layer.closeAll();
+                });
+            }
+        }, function(x) { 
+            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                layer.closeAll();
+            });
+        });
+    }
+
+    // $scope.getSelect = function() {
+    //     $scope.scoreData();
+    // }
+
+    
     
     $scope.download = function() {
         $scope.param.is_html = 0;
@@ -3282,7 +3422,7 @@ App.controller('InputMarketAreController', ["$rootScope", "$scope", 'ConnectApi'
             if($scope.isShow[t]) count++;
         }
         if(!count) {
-            layer.alert('未选择考试！', {icon: 5}, function() {
+            layer.alert('至少统计一个年级！', {icon: 5}, function() {
                 layer.closeAll();
             })
         }else {
@@ -3303,7 +3443,7 @@ App.controller('InputMarketAreController', ["$rootScope", "$scope", 'ConnectApi'
                 var data = ConnectApi.data({ res: response, _index: index });
                 var scoreData = data;
                 if(!data.code) {
-                    ParamTransmit.setParam({ scoreData, scoreAll, plan_id }, ['token', 'user_name', 'header', 'school_id', 'school_name']);
+                    ParamTransmit.setParam({ scoreData, scoreAll, plan_id }, ['token', 'user_name', 'header', 'school_id', 'school_name', 'school_code']);
                     $state.go('app.scoreStatsAll');
                 }
             }, function(x) { 
@@ -3349,14 +3489,29 @@ App.controller('AddScoreController', ["$rootScope", "$scope", 'ConnectApi', '$st
         return tempObj
     }
     
+    var gradeCfg = function(t) { // 生成年级数组
+
+        layer.msg('表格也可以编辑哦~', function() {});
+
+        var zh_cnArr = ["一", "二", "三", "四", "五", "六"];
+        var temp = [];
+        for(var i = 0; i < t; i++) {
+            temp.push(zh_cnArr[i] + '年级')
+        }
+        return temp;
+    }
+    $scope.gradeCfg = gradeCfg(6)// 输入总年级数 不大于6
+
     $scope.param = ParamTransmit.getParam();
+    $scope.current_page = 1;
     $scope.getData = function() {
         var index = layer.load(2);
+        $scope.param.page = $scope.current_page;
         ConnectApi.start('post', 'index/score/getscorelist', $scope.param).then(function(response) { 
             var data = ConnectApi.data({ res: response, _index: index });
             $scope.listData = data.data;
+            $scope.totalpage = data.data.total_page;
             $scope.tableData = createTable($scope.listData.title);
-            layer.msg('表格也可以编辑哦~', function() {});
         }, function(x) { 
             layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                 layer.closeAll();
@@ -3365,29 +3520,51 @@ App.controller('AddScoreController', ["$rootScope", "$scope", 'ConnectApi', '$st
     }
     $scope.getData();
 
-    $scope.save = function() { // 保存成绩
+    $scope.search = function() { // 筛选
+        $scope.getData();
+    }
 
-        $scope.param.scoreInfo = [];
-        $scope.param.student_id = [];
-        $scope.param.test_number = [];
-        var data = $scope.listData.studentData;
-        for(var i = 0; i < data.length; i++) {
-            var temp = [];
-            for(var k = 0; k < data[i].scoreInfo.length; k++) {
-                if(data[i].scoreInfo[k].score == null) {
-                    data[i].scoreInfo[k].score = '';
-                }
-                temp.push(data[i].scoreInfo[k].score);
+    var order = 'DESC'; // ASC升序 DESC降序
+    $scope.sort = function(course_id, e, def) { // 排序
+        var isHasSel = angular.element(e.target).parent().hasClass('selected');
+        if(isHasSel && !def) {
+            if(order == 'DESC') {
+                angular.element(e.target).parent().find('i').addClass('fa-flip-vertical');
+                order = 'ASC';
+            }else {
+                angular.element(e.target).parent().find('i').removeClass('fa-flip-vertical');
+                order = 'DESC';
             }
-            $scope.param.student_id.push(data[i].student_id);
-            $scope.param.test_number.push(data[i].test_number);
-            $scope.param.scoreInfo[i] = temp;
-            $scope.param.plan_id = $scope.listData.planData.plan_id;
+        }else {
+            angular.element('.bgo-sort > li > i').removeClass('fa-flip-vertical');
+            angular.element('.bgo-sort > li').removeClass('selected');
+            angular.element(e.target).parent().addClass('selected');
+            order = 'DESC';
         }
-        ConnectApi.start('post', 'index/score/setscore', $scope.param).then(function(response) { 
+
+        $scope.param.course_id = course_id;
+        $scope.param.order = order;
+        $scope.getData();
+    }
+
+    $scope.studentStatus = [
+        { val: 1, valName: '正常', color: 'green' },
+        { val: 2, valName: '生病', color: 'orange' },
+        { val: 3, valName: '请假', color: 'red' },
+        { val: 4, valName: '其他', color: 'gray' },
+    ]
+
+    $scope.save = function(index) {
+        $scope.param = ParamTransmit.getParam();
+        $scope.param.one_student_score = $scope.listData.data[index];
+        if(!isNaN($scope.param.val)) {
+            $scope.param.one_student_score.status = $scope.param.val;
+        }
+        ConnectApi.start('post', 'index/score/setscore', $scope.param).then(function(response) {
             var data = ConnectApi.data({ res: response });
-            $scope.data = data.data;
-            layer.msg(data.msg);
+            if(data.code == 200) {
+                ParamTransmit.removeParam(['val']);
+            }
         }, function(x) { 
             layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
                 layer.closeAll();
@@ -3395,45 +3572,73 @@ App.controller('AddScoreController', ["$rootScope", "$scope", 'ConnectApi', '$st
         });
     }
 
+    // $scope.save = function() { // 保存成绩
+
+    //     $scope.param.scoreInfo = [];
+    //     $scope.param.student_id = [];
+    //     $scope.param.test_number = [];
+    //     var data = $scope.listData.studentData;
+    //     for(var i = 0; i < data.length; i++) {
+    //         var temp = [];
+    //         for(var k = 0; k < data[i].scoreInfo.length; k++) {
+    //             if(data[i].scoreInfo[k].score == null) {
+    //                 data[i].scoreInfo[k].score = '';
+    //             }
+    //             temp.push(data[i].scoreInfo[k].score);
+    //         }
+    //         $scope.param.student_id.push(data[i].student_id);
+    //         $scope.param.test_number.push(data[i].test_number);
+    //         $scope.param.scoreInfo[i] = temp;
+    //         $scope.param.plan_id = $scope.listData.planData.plan_id;
+    //     }
+    //     ConnectApi.start('post', 'index/score/setscore', $scope.param).then(function(response) { 
+    //         var data = ConnectApi.data({ res: response });
+    //         $scope.data = data.data;
+    //         layer.msg(data.msg);
+    //     }, function(x) { 
+    //         layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+    //             layer.closeAll();
+    //         });
+    //     });
+    // }
+
     // 弹层显示
-    $scope.isShowLayer = function() {
-        $scope.isShow = $scope.isShow ? false : true;
-    }
+    // $scope.isShowLayer = function() {
+    //     $scope.isShow = $scope.isShow ? false : true;
+    // }
 
     var uploadForm = {
-        class_id: '',
-        plan_id: '',
+        plan_id: $scope.param.plan_id,
         token: $scope.param.token,
         school_id: $scope.param.school_id
     };
 
-    $scope.upload = function(cid, pid) {
-        uploadForm.class_id = cid;
-        uploadForm.plan_id = pid;
-    }
-
     var uploader = $scope.uploader = new FileUploader({
-        url: $rootScope.rootUrl +'Index/ExcelIn/scoreClassExcelIn',
-        alias: 'scoreClass',
+        url: $rootScope.rootUrl +'Index/ExcelIn/testScoreExcelIn',
+        alias: 'testScore',
         removeAfterUpload: true,
         formData: [ uploadForm ]
     })
 
     uploader.onProgressItem = function(fileItem, progress) {
-        layer.load(2);
+        var index = layer.msg('正在导入考试成绩，数据较多请耐心等待...', {
+                        icon: 16,
+                        shade: 0.01,
+                        time: 0
+                    });
     };
 
     uploader.onSuccessItem = function(response) {
         $scope.uploadData = JSON.parse(response._xhr.response);
-        if( $scope.uploadData.code != 200 ) {
+        if($scope.uploadData.code != 200 ) {
             layer.alert($scope.uploadData.msg, {icon: 5}, function() {
                 layer.closeAll();
-                $scope.getData();
+                $state.reload();
             })
         }else {
             layer.alert($scope.uploadData.msg, {icon: 6}, function() {
                 layer.closeAll(); 
-                $scope.getData();
+                $state.reload();
             }) 
         }
     };
