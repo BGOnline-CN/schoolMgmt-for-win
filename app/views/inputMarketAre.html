@@ -3,7 +3,12 @@
         <span style="vertical-align: sub;">填写之后生成成绩总表</span>
         <div style="margin-top: 5px;">
             <span style="vertical-align: sub;color: orange;">注意：科目市均值留空则不纳入统计！</span>
-            <button type="button" class="btn btn-primary bgo-button-right" ng-click="save()">生成成绩总表</button>
+            <button type="button" class="btn btn-primary bgo-button-right" style="padding: 5px 12px;" ng-click="save()">生成成绩总表</button>
+            <select class="bgo-select" 
+                style="padding: 6px 12px;float: right;"
+                ng-model="param.type" 
+                ng-options="t.type as t.name for t in typeSel">
+            </select>
         </div>
     </p>
     <div class="row" style="overflow: auto;height: 450px;margin-top: 15px;">
@@ -24,9 +29,9 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>市平均分</th>
-                                <th>市优生率</th>
-                                <th>市及格率</th>
+                                <th>平均分</th>
+                                <th>优生率</th>
+                                <th>及格率</th>
                             </tr>
                         </thead>
                         <tbody>

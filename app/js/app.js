@@ -33,8 +33,8 @@ App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', f
     $rootScope.$stateParams = $stateParams;
     $rootScope.$storage = $window.localStorage;
 
-    $rootScope.rootUrl = 'http://schoolmsnew.thinktorch.cn/';
-    // $rootScope.rootUrl = 'http://192.168.1.200/201702SchoolMS/public/index.php/';
+    // $rootScope.rootUrl = 'http://schoolmsnew.thinktorch.cn/';
+    $rootScope.rootUrl = 'http://192.168.1.200/201702SchoolMS/public/index.php/';
     // 禁用模板缓存
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (typeof(toState) !== 'undefined'){
@@ -1769,7 +1769,8 @@ App.controller('LoginController', ["$rootScope", "$scope", 'ConnectApi', '$state
 
     ParamTransmit.clearParam();
     $scope.param = localStorage.remember ? JSON.parse(localStorage.remember) : {};
-    win.resizeTo(500, 414);
+    // win.resizeTo(500, 414);
+
     // angular.element('body').addClass('win-transparent');
     $scope.go = function() {
       var index = layer.load(2);
@@ -1811,7 +1812,7 @@ App.controller('LoginController', ["$rootScope", "$scope", 'ConnectApi', '$state
 // 注册
 App.controller('RegistController', ["$rootScope", "$scope", 'ConnectApi', '$state', 'ParamTransmit', function($rootScope, $scope, ConnectApi, $state, ParamTransmit) {
     
-    win.resizeTo(500, 454);
+    // win.resizeTo(500, 454);
     $scope.go = function() {
       var index = layer.load(2);
       ConnectApi.start('post', 'index/login/register', $scope.param).then(function(response) {
@@ -1950,7 +1951,7 @@ App.controller('SchoolListController', ["$rootScope", "$scope", 'ConnectApi', '$
 // 首页
 App.controller('HomeController', ["$rootScope", "$scope", 'ConnectApi', '$state', 'ParamTransmit', '$timeout', function($rootScope, $scope, ConnectApi, $state, ParamTransmit, $timeout) {
 
-    win.resizeTo(1280, 735);
+    // win.resizeTo(1280, 735);
 
     $scope.clock = {};
     var clockFunction = function() {
@@ -2872,7 +2873,7 @@ App.controller('CreateExamPlanController', ["$rootScope", "$scope", 'ConnectApi'
     
     $scope.localLang = {
         search: "输入教师姓名",
-        nothingSelected : "请选择阅卷老师" 
+        nothingSelected : "请选择阅卷老师"
     }
 
     $scope.add = function() {
@@ -3001,7 +3002,7 @@ App.controller('QueryExamPlanController', ["$rootScope", "$scope", 'ConnectApi',
     // ConnectApi.start('post', 'index/select/getschoolgcc', $scope.param).then(function(response) { // 获取年级下拉框
     //     var data = ConnectApi.data({ res: response });
     //     $scope.listData = data.data;
-    // });
+    // });  
 
     $scope.getSelect = function(sel, type) {
         $scope.param.type = type;
@@ -3096,6 +3097,28 @@ App.controller('QueryExamPlanController', ["$rootScope", "$scope", 'ConnectApi',
             });
         }, function() {
             layer.closeAll();
+        });
+    }
+
+
+    $scope.bgoSelectList = [
+        { val: 1, valName: '开启', color: 'green' },
+        { val: 0, valName: '关闭', color: 'red' },
+    ]
+
+    $scope.setIsShow = function(id) {
+        $scope.param = ParamTransmit.getParam();
+        $scope.param.plan_id = id;
+        $scope.param.is_upload = $scope.param.val;
+        ConnectApi.start('post', 'index/testplan/saveplan', $scope.param).then(function(response) {
+            var data = ConnectApi.data({ res: response });
+            if(data.code == 200) {
+                $scope.getData();
+            }
+        }, function(x) { 
+            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                layer.closeAll();
+            });
         });
     }
 
@@ -3412,7 +3435,16 @@ App.controller('ScoreStatsAllController', ["$rootScope", "$scope", 'ConnectApi',
 App.controller('InputMarketAreController', ["$rootScope", "$scope", 'ConnectApi', '$state', 'ParamTransmit', function($rootScope, $scope, ConnectApi, $state, ParamTransmit) {
 
     // layer.msg('表格也可以编辑哦~', function() {});
+    
     $scope.param = ParamTransmit.getParam();
+
+    $scope.typeSel = [
+        { type: '市均', name: '按市均' },
+        { type: '城均', name: '按城均' },
+        { type: '省均', name: '按省均' },
+    ]
+    $scope.param.type = '市均';
+    
     $scope.data = $scope.param.data;
     $scope.isShow = [];
     $scope.save = function() {
@@ -3454,6 +3486,73 @@ App.controller('InputMarketAreController', ["$rootScope", "$scope", 'ConnectApi'
         }
 
     }
+
+
+    $scope.param.is_html = 1;
+    var getExcel = function() {
+        var index = layer.load(2);
+        $scope.param.is_graphical = 0; // 表格
+        ConnectApi.start('post', '/Index/Excelout/scoreSummary', $scope.param).then(function(response) {
+            var data = ConnectApi.data({ res: response, _index: index });
+            // $scope.isShowLayer();
+            $scope.data = data;
+            $scope.isChart = false;
+            
+        }, function(x) { 
+            layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                layer.closeAll();
+            });
+        });
+    }
+    // getExcel();
+
+    $scope.download = function() {
+        $scope.param.is_html = 0;
+    }
+
+    $scope.isChart = false;
+    $scope.showChart = function() {
+        $scope.isChart = !$scope.isChart;
+        if($scope.isChart) {
+            $scope.param.is_graphical = 1; // 图表
+            ConnectApi.start('post', '/Index/Excelout/scoreSummary', $scope.param).then(function(response) {
+                var data = ConnectApi.data({ res: response });
+                if(data.code == 200) {
+                    $scope.chartData = data.data;
+                }else {
+                    layer.msg('图表生成失败！', {
+                        icon: 5,
+                        shade: 0.01
+                    });
+                }
+            }, function(x) { 
+                layer.alert("服务器异常，请稍后再试！", {closeBtn: 0, icon: 5}, function() {
+                    layer.closeAll();
+                });
+            });
+        }
+    } 
+
+    $scope.downloadChart = function() {
+        var chart = angular.element('.chart-div');
+        chart.removeAttr('style');
+        var index = layer.msg('正在生成图片“统计图表.png”...', {
+                        icon: 16,
+                        shade: 0.01,
+                        time: 0
+                    });
+        html2canvas(chart, {
+            onrendered: function(canvas) {
+                var url = canvas.toDataURL();
+                var triggerDownload = angular.element("<a>").attr("href", url).attr("download", "统计图表.png").appendTo("body");
+                triggerDownload[0].click();
+                triggerDownload.remove();
+                layer.close(index);
+                chart.css({ overflow: 'auto', height: '350px' });
+            }
+        });
+    }
+
 
 }]);
 
